@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  CLIENT
+  PROVIDER
+}
+
+enum ClientUserType {
+  TUTOR
+}
+
+enum ProviderUserRole {
+  TRAINER
+  WALKER
+  HOTEL
+  ADMIN
+}
+
+enum TourTypes {
+  PACK
+  EXCLUSIVE
+}
+
+enum PackTourTypes {
+  STANDARD
+  BEACH
+  EXTRA
+}
+
+enum ExclusiveTourTypes {
+  STANDARD
+}
+
+enum ServiceType {
+  TOUR
+  TRAINNING
+  ACCOMODATION
+}
+
+model ProviderRole {
+  id    Int              @id @default(autoincrement())
+  name  ProviderUserRole
+  users ProviderUser[]
+}
+
+model Pet {
+  id          Int         @id @default(autoincrement())
+  name        String
+  dateOfBirth DateTime
+  breed       String
+  owner       ClientUser? @relation(fields: [ownerId], references: [id])
+  ownerId     Int?
+  tours       Tour[]
+}
+
+model Tour {
+  id       Int           @id @default(autoincrement())
+  pictures Picture[]
+  videos   Video[]
+  route    TourRoute?
+  pets     Pet[]
+  walker   ProviderUser? @relation(fields: [walkerId], references: [id])
+  walkerId Int?
+}
+
+model ClientUser {
+  id          Int            @id @default(autoincrement())
+  type        ClientUserType
+  email       String         @unique
+  avatar      String
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  password    String         @db.VarChar(255)
+  address     String
+  cpf         String         @unique
+  pets        Pet[]
+}
+
+model ProviderUser {
+  id          Int            @id @default(autoincrement())
+  avatar      String
+  email       String         @unique
+  firstName   String         @db.VarChar(255)
+  lastName    String         @db.VarChar(255)
+  dateOfBirth DateTime
+  password    String         @db.VarChar(255)
+  tours       Tour[]
+  roles       ProviderRole[]
+}
+
+model Picture {
+  id     Int    @id @default(autoincrement())
+  path   String
+  Tour   Tour?  @relation(fields: [tourId], references: [id])
+  tourId Int?
+}
+
+model Video {
+  id     Int    @id @default(autoincrement())
+  path   String
+  Tour   Tour?  @relation(fields: [tourId], references: [id])
+  tourId Int?
+}
+
+model TourRoute {
+  id     Int    @id @default(autoincrement())
+  path   String
+  tour   Tour   @relation(fields: [tourId], references: [id])
+  tourId Int    @unique
+}
