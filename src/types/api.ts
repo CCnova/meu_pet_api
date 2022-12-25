@@ -135,44 +135,46 @@ type ErrorStatusCode =
   | EStatusCode.NotExtended
   | EStatusCode.NetworkAuthenticationRequired;
 
-export interface IRequestBody {
+export type TRequestBody = {
   [k: string]: any; // Matches objects
   [i: number]: any; // Matches arrays
-}
+};
 
-export interface IRequestParams {
+export type TRequestParams = {
   [k: string]: any;
-}
+};
 
-export interface IRequestQuery {
+export type TRequestQuery = {
   [k: string]: any;
-}
+};
 
-export interface IOKResponseBody {
+export type TOKResponseBody = {
   [i: number]: any;
   [k: string]: any;
 
   /** Errors cannot occur on OK responses */
   error?: never;
-}
+};
 
-export interface IErrorResponseBody {
+export type TErrorResponseBody = {
   error: string;
   error_code?: number | string;
-}
+};
 
-export interface IRequest<
-  RequestBody = IRequestBody,
-  RequestParams = IRequestParams,
-  RequestQuery = IRequestQuery
-> extends Omit<express.Request, "body" | "params" | "query"> {
+export type TRequest<
+  RequestBody = TRequestBody,
+  RequestParams = TRequestParams,
+  RequestQuery = TRequestQuery
+> = Omit<express.Request, "body" | "params" | "query"> & {
   body: RequestBody;
   params: RequestParams;
   query: RequestQuery;
-}
+};
 
-export interface IResponse<ResponseBody = IOKResponseBody>
-  extends Omit<express.Response, "status"> {
-  status(code: OKStatusCode | ErrorStatusCode): this;
-  send(body?: ResponseBody): this;
-}
+export type TResponse<ResponseBody = TOKResponseBody> = Omit<
+  express.Response,
+  "status"
+> & {
+  status(code: OKStatusCode | ErrorStatusCode): TResponse<ResponseBody>;
+  send(body?: ResponseBody): TResponse<ResponseBody>;
+};
