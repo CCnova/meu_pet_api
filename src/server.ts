@@ -1,9 +1,7 @@
-import { IApplication } from "./types";
+import { TApplication } from "./types";
 
-const { SERVER_PORT } = process.env;
-
-export function start(app: IApplication) {
-  return app.listen(SERVER_PORT ?? 3000, () => {
-    console.log(`Server listening on port: ${SERVER_PORT}`);
+export function start(app: TApplication, port?: string | number) {
+  return app.listen(port ?? 3000, () => {
+    console.log(`Server listening on port: ${port}`);
   });
 }

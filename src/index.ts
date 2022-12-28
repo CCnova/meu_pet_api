@@ -1,4 +1,6 @@
 import { app } from "./app";
 import * as server from "./server";
 
-server.start(app);
+const { SERVER_PORT } = process.env;
+
+server.start(app, SERVER_PORT);

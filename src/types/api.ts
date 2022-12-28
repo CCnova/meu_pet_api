@@ -1,5 +1,9 @@
 import * as express from "express";
 
+export enum EErrorMessages {
+  InternalServerError = "An unknown error has ocurred",
+}
+
 export enum EStatusCode {
   Continue = 100,
   SwitchingProtocols = 101,
@@ -178,3 +182,5 @@ export type TResponse<ResponseBody = TOKResponseBody> = Omit<
   status(code: OKStatusCode | ErrorStatusCode): TResponse<ResponseBody>;
   send(body?: ResponseBody): TResponse<ResponseBody>;
 };
+
+export type TRouter = express.Router;
