@@ -7,7 +7,7 @@
     "dev": "nodemon --exec 'dotenv -e ./.env -- npx ts-node src/index.ts' ",
     "db:generate": "prisma generate",
     "prepare": "husky install",
-    "lint": "eslint",
+    "lint": "eslint src",
     "test": ""
   },
   "repository": {

@@ -1,3 +1,3 @@
 import * as express from "express";
 
-export type TApplication = express.Application & {};
+export type TApplication = express.Application;
