@@ -1,11 +1,17 @@
-import { ProviderUserDTOs } from "../dtos";
-import { EErrorMessages, EStatusCode, TRequest, TResponse } from "../types";
-import { ProviderUserUseCases } from "../useCases";
+import {
+  EErrorMessages,
+  EStatusCode,
+  Maybe,
+  TRequest,
+  TResponse,
+} from "../../types";
+import * as ProvidersService from "./providers.service";
+import { TRegisterProviderUserDTO } from "./providers.types";
 
-export type TRegisterProviderUserRequest =
-  ProviderUserDTOs.TRegisterProviderUserDTO;
+export type TRegisterProviderUserRequest = TRegisterProviderUserDTO;
+
 export type TRegisterProviderUserResponse = {
-  user: ProviderUserDTOs.TRegisterProviderUserDTO & { id: number };
+  user: Maybe<TRegisterProviderUserDTO & { id: number }>;
 };
 
 export function register(
@@ -13,10 +19,12 @@ export function register(
   response: TResponse<TRegisterProviderUserResponse>
 ): Promise<TResponse> {
   // Todo(CCnova): Never passs the request body directly and without validation to use case domain
-  return ProviderUserUseCases.register(request.body)
+  return ProvidersService.register(request.body)
     .then((user) => response.status(EStatusCode.Accepted).send({ user }))
     .catch((error) => {
+      // Todo(CCnova): Implement a global logger to avoid using the native console in the app
       console.log("AN ERROR HAS OCCURRED", error);
+
       // Todo(CCnova): Need to differentiate the different possible errors instead of only returning Internal server error
       return response
         .status(EStatusCode.InternalServerError)

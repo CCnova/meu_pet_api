@@ -1,10 +1,13 @@
 import { ClientUser } from "@prisma/client";
-import { ClientUserDTOs } from "../../dtos";
 import { prisma } from "../../libs";
 import { encrypt } from "../../utils";
+import {
+  TAuthenticateClientUserDTO,
+  TRegisterClientUserDTO,
+} from "./clients.types";
 
 export async function register(
-  dto: ClientUserDTOs.TRegisterClientUserDTO
+  dto: TRegisterClientUserDTO
 ): Promise<ClientUser> {
   const { password: uncryptedPassword } = dto;
   const encryptedPassword = await encrypt(uncryptedPassword);
@@ -13,3 +16,8 @@ export async function register(
     data: { ...dto, password: encryptedPassword },
   });
 }
+
+// Todo(CNova): Implement
+export declare function authenticate(
+  dto: TAuthenticateClientUserDTO
+): Promise<ClientUser>;

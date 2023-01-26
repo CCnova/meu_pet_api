@@ -140,21 +140,21 @@ type ErrorStatusCode =
   | EStatusCode.NetworkAuthenticationRequired;
 
 export type TRequestBody = {
-  [k: string]: any; // Matches objects
-  [i: number]: any; // Matches arrays
+  [k: string]: unknown; // Matches objects
+  [i: number]: unknown; // Matches arrays
 };
 
 export type TRequestParams = {
-  [k: string]: any;
+  [k: string]: unknown;
 };
 
 export type TRequestQuery = {
-  [k: string]: any;
+  [k: string]: unknown;
 };
 
 export type TOKResponseBody = {
-  [i: number]: any;
-  [k: string]: any;
+  [i: number]: unknown;
+  [k: string]: unknown;
 
   /** Errors cannot occur on OK responses */
   error?: never;
