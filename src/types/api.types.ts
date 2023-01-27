@@ -2,6 +2,7 @@ import * as express from "express";
 
 export enum EErrorMessages {
   InternalServerError = "An unknown error has ocurred",
+  AuthenticationError = "Email or Password is invalid",
 }
 
 export enum EStatusCode {

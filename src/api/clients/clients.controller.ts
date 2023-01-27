@@ -1,6 +1,6 @@
 import { ClientUser } from "@prisma/client";
 import { EErrorMessages, EStatusCode, TRequest, TResponse } from "../../types";
-import * as ClientsService from "./clients.service";
+import ClientsService from "./clients.service";
 import { TRegisterClientUserDTO } from "./clients.types";
 import * as ClientsValidations from "./clients.validations";
 

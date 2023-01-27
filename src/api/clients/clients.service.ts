@@ -1,23 +1,38 @@
 import { ClientUser } from "@prisma/client";
 import { prisma } from "../../libs";
-import { encrypt } from "../../utils";
+import { EErrorMessages } from "../../types";
+import { compare, encrypt } from "../../utils";
+import { AuthenticationError } from "./clients.errors";
 import {
+  DatabaseClient,
   TAuthenticateClientUserDTO,
   TRegisterClientUserDTO,
 } from "./clients.types";
 
-export async function register(
-  dto: TRegisterClientUserDTO
-): Promise<ClientUser> {
-  const { password: uncryptedPassword } = dto;
-  const encryptedPassword = await encrypt(uncryptedPassword);
+export function createInstace(clientsDatabase: DatabaseClient) {
+  return {
+    async register(dto: TRegisterClientUserDTO): Promise<ClientUser> {
+      const { password: uncryptedPassword } = dto;
+      const encryptedPassword = await encrypt(uncryptedPassword);
 
-  return prisma.client.clientUser.create({
-    data: { ...dto, password: encryptedPassword },
-  });
+      return clientsDatabase.create({
+        data: { ...dto, password: encryptedPassword },
+      });
+    },
+    async authenticate(dto: TAuthenticateClientUserDTO): Promise<ClientUser> {
+      const user = await clientsDatabase.findUnique({
+        where: { email: dto.email },
+      });
+      if (!user)
+        throw new AuthenticationError(EErrorMessages.AuthenticationError);
+
+      const isPasswordCorrect = await compare(dto.password, user.password);
+      if (!isPasswordCorrect)
+        throw new AuthenticationError(EErrorMessages.AuthenticationError);
+
+      return user;
+    },
+  };
 }
 
-// Todo(CNova): Implement
-export declare function authenticate(
-  dto: TAuthenticateClientUserDTO
-): Promise<ClientUser>;
+export default createInstace(prisma.client.clientUser);

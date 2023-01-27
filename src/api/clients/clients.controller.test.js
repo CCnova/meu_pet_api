@@ -1,7 +1,7 @@
 import * as ClientsController from "./clients.controller";
-import * as ClientsService from "./clients.service";
+import ClientsService from "./clients.service";
 
-jest.mock("./clients.service.ts", () => {
+jest.mock("./clients.service", () => {
   const mockUser = {
     id: -1,
     address: "fake-address",
@@ -15,16 +15,20 @@ jest.mock("./clients.service.ts", () => {
     type: "TUTOR",
   };
 
-  return {
+  const mockService = {
     register: jest.fn(() => Promise.resolve(mockUser)),
     authenticate: jest.fn(() => Promise.resolve(mockUser)),
+  };
+  return {
+    __esModule: true,
+    default: mockService,
   };
 });
 
 describe("ClientsController.register", () => {
   const mockResponse = { status: () => ({ send: (f) => f }) };
 
-  it("should call ClientUserUseCases.register with the correct arguments", async () => {
+  it("should call ClientsService.register with the correct arguments", async () => {
     const body = {
       address: "fake-address",
       avatar: "fake-avatar",
@@ -72,6 +76,17 @@ describe("ClientsController.authenticate", () => {
 
   it("should throw if email is of invalid type", async () => {
     const body = { email: -1, password: "fake-password" };
+
+    const response = await ClientsController.authenticate(
+      { body },
+      mockResponse
+    );
+
+    expect(response.error).toBeDefined();
+  });
+
+  it("should throw if password is of invalid type", async () => {
+    const body = { email: "test@email.com", password: 1 };
 
     const response = await ClientsController.authenticate(
       { body },
