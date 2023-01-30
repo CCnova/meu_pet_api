@@ -3,6 +3,7 @@ import * as express from "express";
 export enum EErrorMessages {
   InternalServerError = "An unknown error has ocurred",
   AuthenticationError = "Email or Password is invalid",
+  RegisterUserError = "Something went wrong while trying to register user",
 }
 
 export enum EStatusCode {
@@ -185,3 +186,9 @@ export type TResponse<ResponseBody = TOKResponseBody> = Omit<
 };
 
 export type TRouter = express.Router;
+
+export interface IHttpProtocolAdapter {
+  status: (statusCode: EStatusCode) => {
+    send: <T>(responseData: T) => TResponse<T>;
+  };
+}

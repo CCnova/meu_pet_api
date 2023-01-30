@@ -1,0 +1,4 @@
+{
+  "*.ts": ["npm run lint:fix", "npm run test:staged"],
+  "*.js": ["npm run lint:fix", "npm run test:staged"]
+}

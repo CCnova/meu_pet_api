@@ -12,5 +12,8 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["@typescript-eslint", "jest"],
-  rules: {},
+  rules: {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-namespace": "off",
+  },
 };
