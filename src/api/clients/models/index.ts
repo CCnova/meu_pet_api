@@ -1,1 +1,2 @@
-export * from "./errors.models";
+export * from "./clientUser.model";
+export * from "./errors.model";

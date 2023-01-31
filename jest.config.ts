@@ -1,5 +1,5 @@
 export default {
-  clearMocks: true,
+  // clearMocks: true,
   collectCoverageFrom: ["<rootDir>/src/**/*.ts"],
   coverageDirectory: "coverage",
 };

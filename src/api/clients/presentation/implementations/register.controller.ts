@@ -1,10 +1,11 @@
 import { EErrorMessages, EStatusCode } from "../../../../types";
+import { IRegisterClientService } from "../../data/contracts";
 import { RegisterError } from "../../models";
 import { IRegisterClientUserController } from "../contracts";
 import { validateRegisterBody } from "../validations";
 
 export const createInstance: IRegisterClientUserController.TRegisterControllerConstructor =
-  (registerService) => {
+  (registerService: IRegisterClientService) => {
     return {
       async handle(
         request: IRegisterClientUserController.TRegisterRequest,

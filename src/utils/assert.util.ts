@@ -7,3 +7,11 @@ export function isString(
 ): asserts value is string {
   if (!string.isString(value)) throw new ValidationError(message);
 }
+
+export function isMinLength(
+  value: string | Array<unknown>,
+  length: number,
+  message: string
+) {
+  if (value.length < length) throw new ValidationError(message);
+}

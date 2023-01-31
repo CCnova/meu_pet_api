@@ -1,2 +1,2 @@
-export * from "./find.dbclient";
-export * from "./insert.dbclient";
+export * from "./createClientUser.repository";
+export * from "./findClientUser.repository";

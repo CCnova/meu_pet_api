@@ -1,10 +1,11 @@
 import { EErrorMessages, EStatusCode } from "../../../../types";
+import { IAuthenticateClientService } from "../../data/contracts";
 import { AuthenticationError } from "../../models";
 import { IAuthenticateClientUserController } from "../contracts";
 import { validateAuthenticateBody } from "../validations";
 
 export const createInstance: IAuthenticateClientUserController.TAuthenticateControllerConstructor =
-  (authService) => {
+  (authService: IAuthenticateClientService) => {
     return {
       async handle(request, response) {
         validateAuthenticateBody(request.body);

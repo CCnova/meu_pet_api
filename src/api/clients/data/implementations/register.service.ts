@@ -1,10 +1,10 @@
 import { encrypt } from "../../../../utils";
-import { IInsertClientsDatabaseClient } from "../../infra/contracts/insert.dbclient";
+import { ICreateClientUserRepository } from "../../infra/contracts";
 import { RegisterError } from "../../models";
 import { IRegisterClientService } from "../contracts";
 
 export const createInstance: IRegisterClientService.TRegisterClientServiceConstructor =
-  (clientsDatabase: IInsertClientsDatabaseClient) => {
+  (createClientUserRepo: ICreateClientUserRepository) => {
     return {
       async execute(dto: IRegisterClientService.TRegisterClientUserDTO) {
         try {
@@ -12,7 +12,7 @@ export const createInstance: IRegisterClientService.TRegisterClientServiceConstr
           const { password: uncryptedPassword } = dto;
           const encryptedPassword = await encrypt(uncryptedPassword);
 
-          return clientsDatabase.insertOne({
+          return createClientUserRepo.createOne({
             ...dto,
             password: encryptedPassword,
           });

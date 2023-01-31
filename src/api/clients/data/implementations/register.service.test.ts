@@ -9,7 +9,7 @@ jest.mock("../../../../utils", () => ({
 
 describe("RegisterClientService", () => {
   const mockDatabaseClient = {
-    insertOne: jest.fn(),
+    createOne: jest.fn(),
   };
 
   it("should call client.insertOne with the correct arguments", async () => {
@@ -27,7 +27,7 @@ describe("RegisterClientService", () => {
       type: "TUTOR",
     };
     jest
-      .spyOn(mockDatabaseClient, "insertOne")
+      .spyOn(mockDatabaseClient, "createOne")
       .mockResolvedValueOnce({ id: -1, ...dto });
     jest.spyOn(utils, "encrypt").mockResolvedValueOnce(dto.password);
 

@@ -1,2 +1,2 @@
-export * as FindPrismaDatabaseClient from "./find.prisma.dbclient";
-export * as InsertPrismaDatabaseClient from "./insert.prisma.dbclient";
+export * as CreateClientUserPrismaRepository from "./createClientUser.prisma.repository";
+export * as FindClientUserPrismaRepository from "./findClientUser.prisma.repository";
