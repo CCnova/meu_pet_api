@@ -1,7 +1,7 @@
 import validator from "validator";
 import { Maybe } from "../../types";
 import { ValidationError } from "../../types/errors.types";
-import { MIN_PASSWORD_LENGTH } from "../clients/constants";
+import { MIN_PASSWORD_LENGTH } from "../client/constants";
 import { IClient } from "../types/client.types";
 
 export type TCreateClientParams = Omit<IClient, "id">;

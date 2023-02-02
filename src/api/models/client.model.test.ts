@@ -1,6 +1,6 @@
 import { mock } from "jest-mock-extended";
 import { ValidationError } from "../../types/errors.types";
-import { MIN_PASSWORD_LENGTH } from "../clients/constants";
+import { MIN_PASSWORD_LENGTH } from "../client/constants";
 import { IClient } from "../types/client.types";
 import makeClientModel, {
   TCreateClientParams,
