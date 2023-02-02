@@ -55,27 +55,27 @@ model ProviderRole {
 }
 
 model Pet {
-  id          Int         @id @default(autoincrement())
+  id          String      @id
   name        String
   dateOfBirth DateTime
   breed       String
   owner       ClientUser? @relation(fields: [ownerId], references: [id])
-  ownerId     Int?
+  ownerId     String?
   tours       Tour[]
 }
 
 model Tour {
-  id       Int           @id @default(autoincrement())
+  id       String        @id
   pictures Picture[]
   videos   Video[]
   route    TourRoute?
   pets     Pet[]
   walker   ProviderUser? @relation(fields: [walkerId], references: [id])
-  walkerId Int?
+  walkerId String?
 }
 
 model ClientUser {
-  id          Int            @id @default(autoincrement())
+  id          String         @id
   type        ClientUserType
   email       String         @unique
   avatar      String
@@ -89,7 +89,7 @@ model ClientUser {
 }
 
 model ProviderUser {
-  id          Int            @id @default(autoincrement())
+  id          String         @id
   avatar      String
   email       String         @unique
   firstName   String         @db.VarChar(255)
@@ -101,22 +101,22 @@ model ProviderUser {
 }
 
 model Picture {
-  id     Int    @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
   path   String
-  Tour   Tour?  @relation(fields: [tourId], references: [id])
-  tourId Int?
+  Tour   Tour?   @relation(fields: [tourId], references: [id])
+  tourId String?
 }
 
 model Video {
-  id     Int    @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
   path   String
-  Tour   Tour?  @relation(fields: [tourId], references: [id])
-  tourId Int?
+  Tour   Tour?   @relation(fields: [tourId], references: [id])
+  tourId String?
 }
 
 model TourRoute {
   id     Int    @id @default(autoincrement())
   path   String
   tour   Tour   @relation(fields: [tourId], references: [id])
-  tourId Int    @unique
+  tourId String @unique
 }

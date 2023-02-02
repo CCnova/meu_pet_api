@@ -1,11 +1,10 @@
 import bodyParser from "body-parser";
 import express from "express";
-import * as GlobalRouter from "./router";
+import GlobalRouter from "./router";
 
 const app = express();
-const router = express.Router();
 
 app.use(bodyParser.json());
-app.use(GlobalRouter.setup(router));
+app.use(GlobalRouter);
 
 export { app };

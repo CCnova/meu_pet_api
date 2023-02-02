@@ -22,3 +22,7 @@ export class ApiError extends Error {
 export class ValidationError extends ApiError {
   httpStatusCode = EStatusCode.UnprocessableEntity;
 }
+
+export class InternalServerError extends ApiError {
+  httpStatusCode = EStatusCode.InternalServerError;
+}

@@ -1,10 +1,9 @@
-import { ClientsRouter } from "./api/clients";
-import { TRouter } from "./types";
+import express from "express";
+import * as ClientsRoutes from "./api/clients/routes";
 
-const BASE_PATH = "/v1";
+const BASE_PATH = "/api/v1";
+const router = express.Router();
 
-export function setup(router: TRouter) {
-  ClientsRouter.setup(router, `${BASE_PATH}/client-user`);
+ClientsRoutes.setup(router, `${BASE_PATH}/client-user`);
 
-  return router;
-}
+export default router;
