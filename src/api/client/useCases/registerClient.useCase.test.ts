@@ -33,7 +33,9 @@ describe("RegisterClientUseCase", () => {
   it("should call clientRepo.insert", async () => {
     // given
     const sut = makeRegisterClientUseCase(clientRepo);
-    const spy = jest.spyOn(clientRepo, "insert");
+    const spy = jest
+      .spyOn(clientRepo, "insert")
+      .mockImplementation(() => Promise.resolve() as any);
     const pet = mock<TRegisterClientUserDTO["pets"][number]>();
     const dto: TRegisterClientUserDTO = {
       ...mock<TRegisterClientUserDTO>(),
@@ -42,9 +44,6 @@ describe("RegisterClientUseCase", () => {
     jest
       .spyOn(ClientModel, "createClient")
       .mockReturnValueOnce({ id: "any-id", ...dto });
-    // jest
-    //   .spyOn(PetModel, "createPet")
-    //   .mockReturnValueOnce({ id: "any-id", ...pet });
 
     // when
     await sut.execute(dto);

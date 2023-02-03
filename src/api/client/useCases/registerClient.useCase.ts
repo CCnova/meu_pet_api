@@ -4,41 +4,55 @@ import {
 } from "../../../types/errors.types";
 import { fns } from "../../../utils";
 import { ClientModel, PetModel } from "../../models";
+import { IClient, IPet } from "../../types";
 import { IClientDatabase } from "../contracts/data.contracts";
 import {
   IRegisterUserUseCase,
   TRegisterClientUserDTO,
 } from "../contracts/useCases.contracts";
 
+function persistClient(
+  clientRepo: IClientDatabase,
+  modelCreateResult: IClient
+) {
+  return clientRepo.insert(modelCreateResult);
+}
+
+// Todo(CCnova): Implement
+function persistPets(owner: IClient) {
+  // Todo(CCnova): Missing pet repository
+  const pets = [] as IPet[];
+  return Promise.resolve({ ...owner, pets });
+}
+
 export default function makeRegisterClientUseCase(
   clientRepo: IClientDatabase
 ): IRegisterUserUseCase {
   return {
-    async execute(dto: TRegisterClientUserDTO) {
+    execute(dto: TRegisterClientUserDTO) {
       const { pets, ...clientData } = dto;
 
       const createClientResult = ClientModel.createClient(clientData);
       if (createClientResult instanceof ValidationError)
-        return createClientResult;
+        return Promise.resolve(createClientResult);
 
       const createPetsResult = pets.map((pet) => PetModel.createPet(pet));
       if (createPetsResult.some((result) => result instanceof ValidationError))
-        return fns.filterInstancesOf<ValidationError>(
-          createPetsResult,
-          new ValidationError("place-holder message")
+        return Promise.resolve(
+          fns.filterInstancesOf<ValidationError>(
+            createPetsResult,
+            new ValidationError("example message")
+          )
         );
-      // return createPetsResult.filter(
-      //   (result) => result instanceof ValidationError
-      // ) as ValidationError[];
 
-      try {
-        const newClient = await clientRepo.insert(createClientResult);
-        return newClient;
-      } catch (error) {
-        return new InternalServerError(
-          `An unknown error has occurred while trying to register new client user with dto=${dto}`
+      return persistClient(clientRepo, createClientResult)
+        .then(persistPets)
+        .catch(
+          (error) =>
+            new InternalServerError(
+              `An unknown error has occurred while trying to register new client user with dto=${dto}, error=${error}`
+            )
         );
-      }
     },
   };
 }

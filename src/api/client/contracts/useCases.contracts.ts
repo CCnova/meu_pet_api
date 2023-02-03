@@ -6,7 +6,7 @@ import { IPet } from "../../types";
 import { IClient } from "../../types/client.types";
 
 export type TRegisterClientUserDTO = Omit<IClient, "id"> & {
-  pets: Omit<IPet, "id">[];
+  pets: Omit<IPet, "id" | "ownerId">[];
 };
 
 export interface IRegisterUserUseCase {

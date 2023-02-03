@@ -13,7 +13,6 @@ describe("PetModel", () => {
       name: "valid-name",
       breed: "valid-breed",
       dateOfBirth: new Date(),
-      ownerId: "valid-owner-id",
     };
     const id = "random-id";
     jest.spyOn(idGenerator, "generate").mockReturnValueOnce(id);
