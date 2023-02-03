@@ -1,5 +1,6 @@
 import { mock } from "jest-mock-extended";
 import { ValidationError } from "../../types/errors.types";
+import { guard } from "../../utils";
 import { MIN_PASSWORD_LENGTH } from "../client/constants";
 import { IClient } from "../types/client.types";
 import makeClientModel, {
@@ -7,8 +8,14 @@ import makeClientModel, {
   TIdGenerator,
 } from "./client.model";
 
+jest.mock("../../utils/guard.util.ts", () => ({
+  __esModule: true,
+  ...jest.requireActual("../../utils/guard.util.ts"),
+}));
+
 describe("ClientModel", () => {
   const idGenerator = mock<TIdGenerator>();
+  jest.spyOn(guard, "isValidCpf").mockReturnValue(true);
 
   it("createClient should create a Client", async () => {
     // given
