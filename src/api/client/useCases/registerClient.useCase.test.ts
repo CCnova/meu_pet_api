@@ -1,6 +1,6 @@
 import { mock } from "jest-mock-extended";
 import { ValidationError } from "../../../types/errors.types";
-import { ClientModel } from "../../models";
+import { ClientModel, PetModel } from "../../models";
 import { IClientDatabase } from "../contracts/data.contracts";
 import { TRegisterClientUserDTO } from "../contracts/useCases.contracts";
 import makeRegisterClientUseCase from "./registerClient.useCase";
@@ -8,6 +8,7 @@ import makeRegisterClientUseCase from "./registerClient.useCase";
 jest.mock("../../models/index.ts", () => ({
   __esModule: true,
   ClientModel: mock<typeof ClientModel>(),
+  PetModel: mock<typeof PetModel>(),
 }));
 
 describe("RegisterClientUseCase", () => {
@@ -33,10 +34,17 @@ describe("RegisterClientUseCase", () => {
     // given
     const sut = makeRegisterClientUseCase(clientRepo);
     const spy = jest.spyOn(clientRepo, "insert");
-    const dto = mock<TRegisterClientUserDTO>();
+    const pet = mock<TRegisterClientUserDTO["pets"][number]>();
+    const dto: TRegisterClientUserDTO = {
+      ...mock<TRegisterClientUserDTO>(),
+      pets: [pet],
+    };
     jest
       .spyOn(ClientModel, "createClient")
       .mockReturnValueOnce({ id: "any-id", ...dto });
+    // jest
+    //   .spyOn(PetModel, "createPet")
+    //   .mockReturnValueOnce({ id: "any-id", ...pet });
 
     // when
     await sut.execute(dto);

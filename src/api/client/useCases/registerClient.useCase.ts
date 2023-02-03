@@ -2,7 +2,8 @@ import {
   InternalServerError,
   ValidationError,
 } from "../../../types/errors.types";
-import { ClientModel } from "../../models";
+import { fns } from "../../../utils";
+import { ClientModel, PetModel } from "../../models";
 import { IClientDatabase } from "../contracts/data.contracts";
 import {
   IRegisterUserUseCase,
@@ -14,9 +15,21 @@ export default function makeRegisterClientUseCase(
 ): IRegisterUserUseCase {
   return {
     async execute(dto: TRegisterClientUserDTO) {
-      const createClientResult = ClientModel.createClient(dto);
+      const { pets, ...clientData } = dto;
+
+      const createClientResult = ClientModel.createClient(clientData);
       if (createClientResult instanceof ValidationError)
         return createClientResult;
+
+      const createPetsResult = pets.map((pet) => PetModel.createPet(pet));
+      if (createPetsResult.some((result) => result instanceof ValidationError))
+        return fns.filterInstancesOf<ValidationError>(
+          createPetsResult,
+          new ValidationError("place-holder message")
+        );
+      // return createPetsResult.filter(
+      //   (result) => result instanceof ValidationError
+      // ) as ValidationError[];
 
       try {
         const newClient = await clientRepo.insert(createClientResult);

@@ -14,6 +14,8 @@ export default function makePetModel(idGenerator: IIdGenerator) {
     createPet(params: TCreatePetParams): IPet | ValidationError {
       const validationError = this.validate(params, validations);
 
+      console.log({ validationError });
+
       return validationError
         ? validationError
         : { id: idGenerator.generate(), ...params };

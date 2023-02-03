@@ -16,7 +16,7 @@ describe("PetModel", () => {
       ownerId: "valid-owner-id",
     };
     const id = "random-id";
-    jest.spyOn(idGenerator, "generate").mockReturnValue(id);
+    jest.spyOn(idGenerator, "generate").mockReturnValueOnce(id);
     const expectedResult = {
       id,
       ...params,
@@ -34,7 +34,7 @@ describe("PetModel", () => {
     const sut = makePetModel(idGenerator);
     const invalidParams: any = {};
     const expectedError = new ValidationError("some param is missing");
-    jest.spyOn(sut, "validate").mockReturnValue(expectedError);
+    jest.spyOn(sut, "validate").mockReturnValueOnce(expectedError);
 
     // when
     const result = sut.createPet(invalidParams);
