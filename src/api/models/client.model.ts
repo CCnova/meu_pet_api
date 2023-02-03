@@ -1,21 +1,14 @@
 import { Maybe } from "../../types";
 import { ValidationError } from "../../types/errors.types";
+import {
+  TModelValidations,
+  TValidationResult,
+} from "../../types/validations.types";
 import { guard } from "../../utils";
 import { MIN_PASSWORD_LENGTH } from "../client/constants";
+import { IIdGenerator } from "../contracts/models.contracts";
 import { IClient } from "../types/client.types";
-
-export type TCreateClientParams = Omit<IClient, "id">;
-
-export type TValidations = {
-  [field in keyof TCreateClientParams]: (value: any) => TValidationResult;
-};
-
-export type TValidationResult = {
-  isValid: boolean;
-  error: Maybe<ValidationError>;
-};
-
-export type TIdGenerator = { generate: () => string };
+import { modelValidate } from "../utils";
 
 function isValidPassword(password: string): TValidationResult {
   const satisfiesLength = password.length >= MIN_PASSWORD_LENGTH;
@@ -88,30 +81,18 @@ function isValidDateOfBirth(dob: Date): TValidationResult {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare function isValidAvatar(avatar: string): TValidationResult;
 
-function validate(params: TCreateClientParams) {
-  const validations: Partial<TValidations> = {
-    password: isValidPassword,
-    email: isValidEmail,
-    address: isValidAddress,
-    firstName: isValidFirstName,
-    lastName: isValidLastName,
-    cpf: isValidCpf,
-    dateOfBirth: isValidDateOfBirth,
-  };
+export type TCreateClientParams = Omit<IClient, "id">;
 
-  let validationError: Maybe<ValidationError> = null;
-  Object.keys(validations).forEach((paramKey) => {
-    const param = paramKey as keyof TCreateClientParams;
-    const validationRun = validations[param]?.(params[param]);
-
-    if (!validationRun?.isValid && validationRun?.error)
-      validationError = validationRun.error;
-  });
-
-  return validationError;
-}
-
-export default function makeClientModel(idGenerator: TIdGenerator) {
+const validations: Partial<TModelValidations<TCreateClientParams>> = {
+  password: isValidPassword,
+  email: isValidEmail,
+  address: isValidAddress,
+  firstName: isValidFirstName,
+  lastName: isValidLastName,
+  cpf: isValidCpf,
+  dateOfBirth: isValidDateOfBirth,
+};
+export default function makeClientModel(idGenerator: IIdGenerator) {
   return {
     isValidAddress,
     isValidCpf,
@@ -120,9 +101,12 @@ export default function makeClientModel(idGenerator: TIdGenerator) {
     isValidFirstName,
     isValidLastName,
     isValidPassword,
-    validate,
+    validate: modelValidate<TCreateClientParams>,
     createClient(params: TCreateClientParams): IClient | ValidationError {
-      const validationError: Maybe<ValidationError> = this.validate(params);
+      const validationError: Maybe<ValidationError> = this.validate(
+        params,
+        validations
+      );
 
       return validationError
         ? validationError

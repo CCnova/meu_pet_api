@@ -2,11 +2,9 @@ import { mock } from "jest-mock-extended";
 import { ValidationError } from "../../types/errors.types";
 import { guard } from "../../utils";
 import { MIN_PASSWORD_LENGTH } from "../client/constants";
+import { IIdGenerator } from "../contracts/models.contracts";
 import { IClient } from "../types/client.types";
-import makeClientModel, {
-  TCreateClientParams,
-  TIdGenerator,
-} from "./client.model";
+import makeClientModel, { TCreateClientParams } from "./client.model";
 
 jest.mock("../../utils/guard.util.ts", () => ({
   __esModule: true,
@@ -14,7 +12,7 @@ jest.mock("../../utils/guard.util.ts", () => ({
 }));
 
 describe("ClientModel", () => {
-  const idGenerator = mock<TIdGenerator>();
+  const idGenerator = mock<IIdGenerator>();
   jest.spyOn(guard, "isValidCpf").mockReturnValue(true);
 
   it("createClient should create a Client", async () => {
