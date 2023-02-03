@@ -1,10 +1,11 @@
 import * as bcrypt from "bcrypt";
+import { logger } from ".";
 
 export function encrypt(text: string) {
   const saltRounds = 10;
 
   return bcrypt.hash(text, saltRounds).catch((error) => {
-    console.log("An error occurred while encrypting text = ", text);
+    logger.log.error(`An error occurred while encrypting text=${text}`);
     throw error;
   });
 }
