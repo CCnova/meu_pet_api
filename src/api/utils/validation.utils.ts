@@ -5,7 +5,7 @@ import { TModelValidations } from "../../types/validations.types";
 export function modelValidate<EntityType>(
   params: EntityType,
   validations: Partial<TModelValidations<EntityType>>
-) {
+): Maybe<ValidationError> {
   let validationError: Maybe<ValidationError> = null;
   Object.keys(validations).forEach((paramKey) => {
     const param = paramKey as keyof EntityType;
