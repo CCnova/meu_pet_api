@@ -9,11 +9,11 @@ import { IClient } from "../../types/client.types";
 import { IRegisterUserUseCase } from "../contracts/useCases.contracts";
 
 export type TRegisterClientRequestBody = Omit<IClient, "id"> & {
-  pets: Omit<IPet, "id">;
+  pets: Omit<IPet, "id" | "ownerId">[];
 };
 export type TRegisterClientRequest = TRequest<TRegisterClientRequestBody>;
 export type TRegisterClientResponseBody = {
-  data?: IClient;
+  data?: IClient & { pets: IPet };
   error?: ValidationError | InternalServerError;
 };
 export type TRegisterClientResponse = TResponse<TRegisterClientResponseBody>;
