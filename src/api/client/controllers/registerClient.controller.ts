@@ -4,10 +4,13 @@ import {
   ValidationError,
 } from "../../../types/errors.types";
 import { logger } from "../../../utils";
+import { IPet } from "../../types";
 import { IClient } from "../../types/client.types";
 import { IRegisterUserUseCase } from "../contracts/useCases.contracts";
 
-export type TRegisterClientRequestBody = Omit<IClient, "id">;
+export type TRegisterClientRequestBody = Omit<IClient, "id"> & {
+  pets: Omit<IPet, "id">;
+};
 export type TRegisterClientRequest = TRequest<TRegisterClientRequestBody>;
 export type TRegisterClientResponseBody = {
   data?: IClient;
