@@ -82,6 +82,7 @@ function isValidDateOfBirth(dob: Date): TValidationResult {
 declare function isValidAvatar(avatar: string): TValidationResult;
 
 export type TCreateClientParams = Omit<IClient, "id">;
+export type TCreateClientResult = IClient | ValidationError;
 
 const validations: Partial<TModelValidations<TCreateClientParams>> = {
   password: isValidPassword,
@@ -102,7 +103,7 @@ export default function makeClientModel(idGenerator: IIdGenerator) {
     isValidLastName,
     isValidPassword,
     validate: modelValidate<TCreateClientParams>,
-    createClient(params: TCreateClientParams): IClient | ValidationError {
+    createClient(params: TCreateClientParams): TCreateClientResult {
       const validationError: Maybe<ValidationError> = this.validate(
         params,
         validations

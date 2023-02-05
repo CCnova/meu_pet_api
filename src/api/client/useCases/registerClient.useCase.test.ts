@@ -1,6 +1,7 @@
 import { mock } from "jest-mock-extended";
 import { ValidationError } from "../../../types/errors.types";
 import { ClientModel, PetModel } from "../../models";
+import { IPetDatabase } from "../../pet/contracts";
 import { IClientDatabase } from "../contracts/data.contracts";
 import { TRegisterClientUserDTO } from "../contracts/useCases.contracts";
 import makeRegisterClientUseCase from "./registerClient.useCase";
@@ -13,10 +14,11 @@ jest.mock("../../models/index.ts", () => ({
 
 describe("RegisterClientUseCase", () => {
   const clientRepo = mock<IClientDatabase>();
+  const petRepo = mock<IPetDatabase>();
 
   it("should return ValidationError when ClientModel.createClient returns error", async () => {
     // given
-    const sut = makeRegisterClientUseCase(clientRepo);
+    const sut = makeRegisterClientUseCase({ clientRepo, petRepo });
     const spy = jest
       .spyOn(ClientModel, "createClient")
       .mockReturnValueOnce(new ValidationError("any-message"));
@@ -32,7 +34,7 @@ describe("RegisterClientUseCase", () => {
 
   it("should call clientRepo.insert", async () => {
     // given
-    const sut = makeRegisterClientUseCase(clientRepo);
+    const sut = makeRegisterClientUseCase({ clientRepo, petRepo });
     const spy = jest
       .spyOn(clientRepo, "insert")
       .mockImplementation(() => Promise.resolve() as any);

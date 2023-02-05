@@ -4,6 +4,9 @@ import {
 } from "../../../types/errors.types";
 import { fns } from "../../../utils";
 import { ClientModel, PetModel } from "../../models";
+import { TCreateClientResult } from "../../models/client.model";
+import { TCreatePetResult } from "../../models/pet.model";
+import { IPetDatabase } from "../../pet/contracts";
 import { IClient, IPet } from "../../types";
 import { IClientDatabase } from "../contracts/data.contracts";
 import {
@@ -11,23 +14,31 @@ import {
   TRegisterClientUserDTO,
 } from "../contracts/useCases.contracts";
 
-function persistClient(
-  clientRepo: IClientDatabase,
-  modelCreateResult: IClient
-) {
-  return clientRepo.insert(modelCreateResult);
+function persistClient(dependencies: {
+  clientRepo: IClientDatabase;
+  modelCreateResult: TCreateClientResult;
+}) {
+  return dependencies.clientRepo.insert(
+    dependencies.modelCreateResult as IClient
+  );
 }
 
-// Todo(CCnova): Implement
-function persistPets(owner: IClient) {
-  // Todo(CCnova): Missing pet repository
-  const pets = [] as IPet[];
-  return Promise.resolve({ ...owner, pets });
+async function persistPets(dependencies: {
+  petRepo: IPetDatabase;
+  pets: TCreatePetResult[];
+  owner: IClient;
+}) {
+  const pets = await dependencies.petRepo.bulkInsert(
+    dependencies.pets as IPet[]
+  );
+
+  return { ...dependencies.owner, pets };
 }
 
-export default function makeRegisterClientUseCase(
-  clientRepo: IClientDatabase
-): IRegisterUserUseCase {
+export default function makeRegisterClientUseCase(params: {
+  clientRepo: IClientDatabase;
+  petRepo: IPetDatabase;
+}): IRegisterUserUseCase {
   return {
     execute(dto: TRegisterClientUserDTO) {
       const { pets, ...clientData } = dto;
@@ -45,14 +56,23 @@ export default function makeRegisterClientUseCase(
           )
         );
 
-      return persistClient(clientRepo, createClientResult)
-        .then(persistPets)
-        .catch(
-          (error) =>
-            new InternalServerError(
-              `An unknown error has occurred while trying to register new client user with dto=${dto}, error=${error}`
-            )
-        );
+      return persistClient({
+        clientRepo: params.clientRepo,
+        modelCreateResult: createClientResult,
+      })
+        .then((persistedClient) =>
+          persistPets({
+            petRepo: params.petRepo,
+            pets: createPetsResult,
+            owner: persistedClient,
+          })
+        )
+        .catch((error) => {
+          // Todo(CCnova): Revert persisted data
+          return new InternalServerError(
+            `An unknown error has occurred while trying to register new client user with dto=${dto}, error=${error}`
+          );
+        });
     },
   };
 }

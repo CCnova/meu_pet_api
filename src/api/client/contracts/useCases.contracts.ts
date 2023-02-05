@@ -3,7 +3,7 @@ import {
   ValidationError,
 } from "../../../types/errors.types";
 import { IPet } from "../../types";
-import { IClient } from "../../types/client.types";
+import { IClient, IClientWithPets } from "../../types/client.types";
 
 export type TRegisterClientUserDTO = Omit<IClient, "id"> & {
   pets: Omit<IPet, "id" | "ownerId">[];
@@ -13,6 +13,6 @@ export interface IRegisterUserUseCase {
   execute: (
     dto: TRegisterClientUserDTO
   ) => Promise<
-    IClient | ValidationError | ValidationError[] | InternalServerError
+    IClientWithPets | ValidationError | ValidationError[] | InternalServerError
   >;
 }
