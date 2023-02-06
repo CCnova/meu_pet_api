@@ -4,14 +4,13 @@ import {
   InternalServerError,
   ValidationError,
 } from "../../../types/errors.types";
-import { IRegisterUserUseCase } from "../contracts/useCases.contracts";
 import makeRegisterClientController, {
   TRegisterClientRequest,
   TRegisterClientResponse,
 } from "./registerClient.controller";
 
 describe("RegisterClientController", () => {
-  const registerClient = mock<IRegisterUserUseCase>();
+  const registerClient = jest.fn();
   const request = mock<TRegisterClientRequest>();
   const response = {
     statusCode: undefined,
@@ -27,20 +26,19 @@ describe("RegisterClientController", () => {
   it("should execute createClientUseCase", async () => {
     // given
     const sut = makeRegisterClientController(registerClient);
-    const spy = jest.spyOn(registerClient, "execute");
 
     // when
     await sut.handle(request, response);
 
     // then
-    expect(spy).toBeCalledTimes(1);
+    expect(registerClient).toBeCalledTimes(1);
   });
 
   it("should return ValidationError when useCase returns ValidationError", async () => {
     // given
-    const sut = makeRegisterClientController(registerClient);
     const expectedError = new ValidationError("any validation error");
-    jest.spyOn(registerClient, "execute").mockResolvedValueOnce(expectedError);
+    registerClient.mockResolvedValueOnce(expectedError);
+    const sut = makeRegisterClientController(registerClient);
 
     // when
     const result = await sut.handle(request, response);
@@ -51,9 +49,9 @@ describe("RegisterClientController", () => {
 
   it("should return InternalServerError when useCase returns InternalServerError", async () => {
     // given
-    const sut = makeRegisterClientController(registerClient);
     const expectedError = new InternalServerError("any internal server error");
-    jest.spyOn(registerClient, "execute").mockResolvedValueOnce(expectedError);
+    registerClient.mockResolvedValueOnce(expectedError);
+    const sut = makeRegisterClientController(registerClient);
 
     // when
     const result = await sut.handle(request, response);

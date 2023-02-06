@@ -3,7 +3,7 @@ import { ValidationError } from "../../../types/errors.types";
 import { ClientModel, PetModel } from "../../models";
 import { IPetDatabase } from "../../pet/contracts";
 import { IClientDatabase } from "../contracts/data.contracts";
-import { TRegisterClientUserDTO } from "../contracts/useCases.contracts";
+import { TRegisterClientDTO } from "../contracts/useCases.contracts";
 import makeRegisterClientUseCase from "./registerClient.useCase";
 
 jest.mock("../../models/index.ts", () => ({
@@ -22,10 +22,10 @@ describe("RegisterClientUseCase", () => {
     const spy = jest
       .spyOn(ClientModel, "createClient")
       .mockReturnValueOnce(new ValidationError("any-message"));
-    const dto = mock<TRegisterClientUserDTO>();
+    const dto = mock<TRegisterClientDTO>();
 
     // when
-    const result = await sut.execute(dto);
+    const result = await sut(dto);
 
     // then
     expect(spy).toHaveBeenCalledTimes(1);
@@ -38,9 +38,9 @@ describe("RegisterClientUseCase", () => {
     const spy = jest
       .spyOn(clientRepo, "insert")
       .mockImplementation(() => Promise.resolve() as any);
-    const pet = mock<TRegisterClientUserDTO["pets"][number]>();
-    const dto: TRegisterClientUserDTO = {
-      ...mock<TRegisterClientUserDTO>(),
+    const pet = mock<TRegisterClientDTO["pets"][number]>();
+    const dto: TRegisterClientDTO = {
+      ...mock<TRegisterClientDTO>(),
       pets: [pet],
     };
     jest
@@ -48,7 +48,7 @@ describe("RegisterClientUseCase", () => {
       .mockReturnValueOnce({ id: "any-id", ...dto });
 
     // when
-    await sut.execute(dto);
+    await sut(dto);
 
     // then
     expect(spy).toHaveBeenCalledTimes(1);

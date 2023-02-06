@@ -1,10 +1,10 @@
 import { PetRepository } from "../../pet/data";
 import { ClientRepository } from "../data";
-import makeRegisterClientUserCase from "./registerClient.useCase";
+import makeRegisterClientUseCase from "./registerClient.useCase";
 
-const RegisterClientUseCase = makeRegisterClientUserCase({
+const registerClient = makeRegisterClientUseCase({
   clientRepo: ClientRepository,
   petRepo: PetRepository,
 });
 
-export { RegisterClientUseCase };
+export { registerClient };

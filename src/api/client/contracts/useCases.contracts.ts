@@ -5,14 +5,16 @@ import {
 import { IPet } from "../../types";
 import { IClient, IClientWithPets } from "../../types/client.types";
 
-export type TRegisterClientUserDTO = Omit<IClient, "id"> & {
+export type TRegisterClientDTO = Omit<IClient, "id"> & {
   pets: Omit<IPet, "id" | "ownerId">[];
 };
 
-export interface IRegisterUserUseCase {
-  execute: (
-    dto: TRegisterClientUserDTO
-  ) => Promise<
-    IClientWithPets | ValidationError | ValidationError[] | InternalServerError
-  >;
-}
+export type TRegisterClientResult =
+  | IClientWithPets
+  | ValidationError
+  | ValidationError[]
+  | InternalServerError;
+
+export type TRegisterClientUseCase = (
+  dto: TRegisterClientDTO
+) => Promise<TRegisterClientResult>;

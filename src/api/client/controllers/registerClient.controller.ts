@@ -6,7 +6,7 @@ import {
 import { logger } from "../../../utils";
 import { IPet } from "../../types";
 import { IClient } from "../../types/client.types";
-import { IRegisterUserUseCase } from "../contracts/useCases.contracts";
+import { TRegisterClientUseCase } from "../contracts";
 
 export type TRegisterClientRequestBody = Omit<IClient, "id"> & {
   pets: Omit<IPet, "id" | "ownerId">[];
@@ -43,14 +43,14 @@ function handleInternalServerError(
 }
 
 export default function makeRegisterClientController(
-  registerClient: IRegisterUserUseCase
+  registerClient: TRegisterClientUseCase
 ) {
   return {
     async handle(
       request: TRegisterClientRequest,
       response: TRegisterClientResponse
     ) {
-      const registerClientResult = await registerClient.execute(request.body);
+      const registerClientResult = await registerClient(request.body);
 
       if (registerClientResult instanceof ValidationError)
         return handleValidationError(registerClientResult, response);
