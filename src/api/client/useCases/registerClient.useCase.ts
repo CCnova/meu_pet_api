@@ -34,6 +34,18 @@ async function persistPets(dependencies: {
 
   return { ...dependencies.owner, pets };
 }
+// Todo(CCnova): Revert persisted data
+function revertUseCase(params: {
+  client: IClient;
+  pets: IPet[];
+  clientRepo: IClientDatabase;
+  petRepo: IPetDatabase;
+}): Promise<unknown> {
+  return Promise.all([
+    params.clientRepo.delete(params.client.id),
+    ...params.pets.map((pet) => params.petRepo.delete(pet.id)),
+  ]);
+}
 
 export default function makeRegisterClientUseCase(params: {
   clientRepo: IClientDatabase;
@@ -68,7 +80,12 @@ export default function makeRegisterClientUseCase(params: {
           })
         )
         .catch((error) => {
-          // Todo(CCnova): Revert persisted data
+          revertUseCase({
+            client: createClientResult,
+            pets: createPetsResult as IPet[],
+            clientRepo: params.clientRepo,
+            petRepo: params.petRepo,
+          });
           return new InternalServerError(
             `An unknown error has occurred while trying to register new client user with dto=${dto}, error=${error}`
           );

@@ -21,5 +21,13 @@ export default function makePetPrismaRepository(
         )
       );
     },
+
+    async delete(id: string) {
+      const pet = prismaClient.pet.findUnique({ where: { id } });
+
+      if (pet !== null) prismaClient.pet.delete({ where: { id } });
+
+      return pet;
+    },
   };
 }

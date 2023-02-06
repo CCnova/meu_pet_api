@@ -1,5 +1,4 @@
+import { IDatabase } from "../../contracts/data.contracts";
 import { IClient } from "../../types/client.types";
 
-export interface IClientDatabase {
-  insert: (data: IClient) => Promise<IClient>;
-}
+export interface IClientDatabase extends IDatabase<IClient> {}
