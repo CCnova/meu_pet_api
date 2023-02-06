@@ -34,13 +34,13 @@ async function persistPets(dependencies: {
 
   return { ...dependencies.owner, pets };
 }
-// Todo(CCnova): Revert persisted data
+
 function revertUseCase(params: {
   client: IClient;
   pets: IPet[];
   clientRepo: IClientDatabase;
   petRepo: IPetDatabase;
-}): Promise<unknown> {
+}): Promise<any> {
   return Promise.all([
     params.clientRepo.delete(params.client.id),
     ...params.pets.map((pet) => params.petRepo.delete(pet.id)),
@@ -80,6 +80,7 @@ export default function makeRegisterClientUseCase(params: {
           })
         )
         .catch((error) => {
+          // Todo(CCnova): unit test this case
           revertUseCase({
             client: createClientResult,
             pets: createPetsResult as IPet[],
