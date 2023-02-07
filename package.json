@@ -10,10 +10,10 @@
     "format": "prettier --write .",
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
-    "test": "jest --passWithNoTests --no-cache --runInBand",
+    "test": "jest --no-cache --runInBand --passWithNoTests",
     "test:watch": "npm test -- --watch",
     "test:coverage": "npm test -- --coverage",
-    "test:staged": "npm test -- --findRelatedTests"
+    "test:staged": "dotenv -e .env.ci npm test -- --findRelatedTests"
   },
   "repository": {
     "type": "git",
