@@ -42,6 +42,7 @@ export default function makeRegisterClientController(
     request: TRegisterClientRequest,
     response: TRegisterClientResponse
   ): Promise<TRegisterClientResponse> => {
+    // Todo(CCnova): Validate request body
     const registerClientResult = await registerClient(request.body);
 
     if (registerClientResult instanceof ValidationError)
