@@ -1,8 +1,6 @@
-import { RegisterClientUseCase } from "../useCases";
+import { registerClient } from "../useCases";
 import makeRegisterClientController from "./registerClient.controller";
 
-const RegisterClientController = makeRegisterClientController(
-  RegisterClientUseCase
-);
+const registerClientController = makeRegisterClientController(registerClient);
 
-export { RegisterClientController };
+export { registerClientController };

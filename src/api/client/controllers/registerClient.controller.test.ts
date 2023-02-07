@@ -4,10 +4,11 @@ import {
   InternalServerError,
   ValidationError,
 } from "../../../types/errors.types";
-import makeRegisterClientController, {
+import {
   TRegisterClientRequest,
   TRegisterClientResponse,
-} from "./registerClient.controller";
+} from "../contracts/controllers.contracts";
+import makeRegisterClientController from "./registerClient.controller";
 
 describe("RegisterClientController", () => {
   const registerClient = jest.fn();
@@ -28,7 +29,7 @@ describe("RegisterClientController", () => {
     const sut = makeRegisterClientController(registerClient);
 
     // when
-    await sut.handle(request, response);
+    await sut(request, response);
 
     // then
     expect(registerClient).toBeCalledTimes(1);
@@ -41,7 +42,7 @@ describe("RegisterClientController", () => {
     const sut = makeRegisterClientController(registerClient);
 
     // when
-    const result = await sut.handle(request, response);
+    const result = await sut(request, response);
 
     // then
     expect(result).toEqual({ data: null, error: expectedError });
@@ -54,7 +55,7 @@ describe("RegisterClientController", () => {
     const sut = makeRegisterClientController(registerClient);
 
     // when
-    const result = await sut.handle(request, response);
+    const result = await sut(request, response);
 
     // then
     expect(result).toEqual({ data: null, error: expectedError });
