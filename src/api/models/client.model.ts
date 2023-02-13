@@ -84,16 +84,16 @@ declare function isValidAvatar(avatar: string): TValidationResult;
 export type TCreateClientParams = Omit<IClient, "id">;
 export type TCreateClientResult = IClient | ValidationError;
 
-const validations: Partial<TModelValidations<TCreateClientParams>> = {
-  password: isValidPassword,
-  email: isValidEmail,
-  address: isValidAddress,
-  firstName: isValidFirstName,
-  lastName: isValidLastName,
-  cpf: isValidCpf,
-  dateOfBirth: isValidDateOfBirth,
-};
 export default function makeClientModel(idGenerator: IIdGenerator) {
+  const validations: Partial<TModelValidations<TCreateClientParams>> = {
+    password: isValidPassword,
+    email: isValidEmail,
+    address: isValidAddress,
+    firstName: isValidFirstName,
+    lastName: isValidLastName,
+    cpf: isValidCpf,
+    dateOfBirth: isValidDateOfBirth,
+  };
   return {
     isValidAddress,
     isValidCpf,

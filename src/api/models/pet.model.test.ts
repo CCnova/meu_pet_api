@@ -12,7 +12,7 @@ describe("PetModel", () => {
     const params: TCreatePetParams = {
       name: "valid-name",
       breed: "valid-breed",
-      dateOfBirth: new Date(),
+      dateOfBirth: new Date("01/01/2000"),
     };
     const id = "random-id";
     jest.spyOn(idGenerator, "generate").mockReturnValueOnce(id);
