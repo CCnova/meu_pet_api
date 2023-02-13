@@ -35,3 +35,11 @@ export function isValidCpf(value: any): boolean {
     10;
   return rest(10) === value[9] && rest(11) === value[10];
 }
+
+export function isDate(value: any): boolean {
+  return value instanceof Date;
+}
+
+export function isOneOf<V>(value: V, values: V[]) {
+  return values.includes(value);
+}

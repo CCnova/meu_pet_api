@@ -1,3 +1,4 @@
+import { ClientUserType } from "@prisma/client";
 import { Maybe } from "../../types";
 import { ValidationError } from "../../types/errors.types";
 import {
@@ -77,6 +78,15 @@ function isValidDateOfBirth(dob: Date): TValidationResult {
   };
 }
 
+function isValidType(type: string): TValidationResult {
+  const isValid = guard.isOneOf(type, Object.values(ClientUserType));
+
+  return {
+    isValid,
+    error: isValid ? null : new ValidationError("type is invalid"),
+  };
+}
+
 // Todo(CCnova): Implement
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare function isValidAvatar(avatar: string): TValidationResult;
@@ -93,6 +103,7 @@ export default function makeClientModel(idGenerator: IIdGenerator) {
     lastName: isValidLastName,
     cpf: isValidCpf,
     dateOfBirth: isValidDateOfBirth,
+    type: isValidType,
   };
   return {
     isValidAddress,

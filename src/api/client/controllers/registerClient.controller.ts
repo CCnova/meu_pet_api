@@ -3,13 +3,36 @@ import {
   InternalServerError,
   ValidationError,
 } from "../../../types/errors.types";
-import { logger } from "../../../utils";
+import { TValidationResult } from "../../../types/validations.types";
+import { assert, logger } from "../../../utils";
 import { TRegisterClientUseCase } from "../contracts";
 import {
   TRegisterClientController,
   TRegisterClientRequest,
+  TRegisterClientRequestBody,
   TRegisterClientResponse,
 } from "../contracts/controllers.contracts";
+
+function validateRequestBody(
+  body: TRegisterClientRequestBody
+): TValidationResult {
+  try {
+    assert.isString(body.address, "address must be a string");
+    assert.isString(body.cpf, "cpf must be a string");
+    assert.isDate(body.dateOfBirth, "dateOfBirth must be a Date");
+    assert.isString(body.email, "email must be a string");
+    assert.isString(body.firstName, "firstName must be a string");
+    assert.isString(body.lastName, "lastName must be a string");
+    assert.isString(body.password, "password must be a string");
+    assert.isString(body.type, "type must be a string");
+
+    if (body.avatar) assert.isString(body.avatar, "");
+
+    return { isValid: true, error: null };
+  } catch (validationError) {
+    return { isValid: false, error: validationError as ValidationError };
+  }
+}
 
 function handleValidationError(
   error: ValidationError,
@@ -42,6 +65,14 @@ export default function makeRegisterClientController(
     request: TRegisterClientRequest,
     response: TRegisterClientResponse
   ): Promise<TRegisterClientResponse> => {
+    const bodyValidationResult = validateRequestBody(request.body);
+
+    if (!bodyValidationResult.isValid)
+      handleValidationError(
+        bodyValidationResult.error as ValidationError,
+        response
+      );
+
     // Todo(CCnova): Validate request body
     const registerClientResult = await registerClient(request.body);
 
