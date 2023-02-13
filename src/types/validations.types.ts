@@ -6,6 +6,6 @@ export type TValidationResult = {
   error: Maybe<ValidationError>;
 };
 
-export type TModelValidations<CreateModelParamsType> = {
-  [field in keyof CreateModelParamsType]: (value: any) => TValidationResult;
+export type TModelValidations<ModelParamsType> = {
+  [field in keyof ModelParamsType]: (value: any) => TValidationResult;
 };

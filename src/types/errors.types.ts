@@ -26,3 +26,7 @@ export class ValidationError extends ApiError {
 export class InternalServerError extends ApiError {
   httpStatusCode = EStatusCode.InternalServerError;
 }
+
+export class NotFoundError extends ApiError {
+  httpStatusCode = EStatusCode.NotFound;
+}

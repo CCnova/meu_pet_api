@@ -23,11 +23,15 @@ export default function makeClientPrismaRepository(
     },
 
     async delete(id: string) {
-      const client = prismaClient.clientUser.findUnique({ where: { id } });
+      const client = this.findOne({ id });
 
       if (client !== null) prismaClient.clientUser.delete({ where: { id } });
 
       return client;
+    },
+
+    async findOne(where: Partial<IClient>) {
+      return prismaClient.clientUser.findUnique({ where });
     },
   };
 }

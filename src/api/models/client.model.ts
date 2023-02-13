@@ -102,7 +102,7 @@ export default function makeClientModel(idGenerator: IIdGenerator) {
     isValidFirstName,
     isValidLastName,
     isValidPassword,
-    validate: modelValidate<TCreateClientParams>,
+    validate: modelValidate<Partial<IClient>>,
     createClient(params: TCreateClientParams): TCreateClientResult {
       const validationError: Maybe<ValidationError> = this.validate(
         params,
