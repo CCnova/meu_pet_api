@@ -171,18 +171,15 @@ export type TRequest<
   RequestBody = TRequestBody,
   RequestParams = TRequestParams,
   RequestQuery = TRequestQuery
-> = Omit<express.Request, "body" | "params" | "query"> & {
+> = {
   body: RequestBody;
   params: RequestParams;
   query: RequestQuery;
 };
 
-export type TResponse<ResponseBody = TOKResponseBody> = Omit<
-  express.Response,
-  "status"
-> & {
-  status(code: OKStatusCode | ErrorStatusCode): TResponse<ResponseBody>;
-  send(body?: ResponseBody): TResponse<ResponseBody>;
+export type TResponse<ResponseBody = TOKResponseBody> = {
+  body: ResponseBody;
+  statusCode: OKStatusCode | ErrorStatusCode;
 };
 
 export type TRouter = express.Router;
@@ -192,3 +189,8 @@ export interface IHttpProtocolAdapter {
     send: <T>(responseData: T) => TResponse<T>;
   };
 }
+
+export type TApiController<RequestType, ResponseType> = (
+  request: RequestType,
+  response: ResponseType
+) => Promise<ResponseType>;

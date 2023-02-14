@@ -5,6 +5,7 @@ import {
 } from "../../../types/errors.types";
 import { TValidationResult } from "../../../types/validations.types";
 import { assert, logger } from "../../../utils";
+import { IClientWithPets } from "../../types";
 import { TRegisterClientUseCase } from "../contracts";
 import {
   TRegisterClientController,
@@ -34,54 +35,48 @@ function validateRequestBody(
   }
 }
 
-function handleValidationError(
-  error: ValidationError,
-  response: TRegisterClientResponse
-) {
+function handleValidationError(error: ValidationError) {
   logger.log.error(
     `A parameter passed to register client user is invalid, message=${error.message}`
   );
-  return response
-    .status(EStatusCode.UnprocessableEntity)
-    .send({ data: null, error });
+
+  return {
+    statusCode: EStatusCode.UnprocessableEntity,
+    body: { error },
+  };
 }
 
-function handleInternalServerError(
-  error: InternalServerError,
-  response: TRegisterClientResponse
-) {
+function handleInternalServerError(error: InternalServerError) {
   logger.log.error(
     `A unknown error has occurred while trying to create a new client, message=${error.message}`
   );
-  return response
-    .status(EStatusCode.InternalServerError)
-    .send({ data: null, error });
+
+  return {
+    statusCode: EStatusCode.InternalServerError,
+    body: { error },
+  };
 }
 
 export default function makeRegisterClientController(
   registerClient: TRegisterClientUseCase
 ): TRegisterClientController {
   return async (
-    request: TRegisterClientRequest,
-    response: TRegisterClientResponse
+    request: TRegisterClientRequest
   ): Promise<TRegisterClientResponse> => {
     const bodyValidationResult = validateRequestBody(request.body);
 
     if (!bodyValidationResult.isValid)
-      handleValidationError(
-        bodyValidationResult.error as ValidationError,
-        response
-      );
+      handleValidationError(bodyValidationResult.error as ValidationError);
 
-    // Todo(CCnova): Validate request body
     const registerClientResult = await registerClient(request.body);
 
     if (registerClientResult instanceof ValidationError)
-      return handleValidationError(registerClientResult, response);
+      return handleValidationError(registerClientResult);
     if (registerClientResult instanceof InternalServerError)
-      return handleInternalServerError(registerClientResult, response);
-    return response
-      .status(EStatusCode.Accepted)
-      .send({ data: registerClientResult });
+      return handleInternalServerError(registerClientResult);
+    return {
+      statusCode: EStatusCode.Accepted,
+      body: { data: registerClientResult as IClientWithPets },
+    };
   };
 }

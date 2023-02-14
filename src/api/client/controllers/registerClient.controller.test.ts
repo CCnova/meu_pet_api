@@ -45,7 +45,7 @@ describe("RegisterClientController", () => {
     const result = await sut(request, response);
 
     // then
-    expect(result).toEqual({ data: null, error: expectedError });
+    expect(result.body).toEqual({ error: expectedError });
   });
 
   it("should return InternalServerError when useCase returns InternalServerError", async () => {
@@ -58,6 +58,6 @@ describe("RegisterClientController", () => {
     const result = await sut(request, response);
 
     // then
-    expect(result).toEqual({ data: null, error: expectedError });
+    expect(result.body).toEqual({ error: expectedError });
   });
 });
