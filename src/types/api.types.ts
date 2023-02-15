@@ -191,6 +191,5 @@ export interface IHttpProtocolAdapter {
 }
 
 export type TApiController<RequestType, ResponseType> = (
-  request: RequestType,
-  response: ResponseType
+  request: RequestType
 ) => Promise<ResponseType>;

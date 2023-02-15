@@ -23,14 +23,12 @@ export type TRegisterClientUseCase = (
   dto: TRegisterClientDTO
 ) => Promise<TRegisterClientResult>;
 
-export type TAuthenticateClientDTO = {
+export type TLoginDTO = {
   email: string;
   password: string;
 };
-export type TAuthenticateClientResult =
+export type TLoginResult =
   | TAuthenticatedClientInfo
   | ValidationError
   | InternalServerError;
-export type TAuthenticateClientUseCase = (
-  dto: TAuthenticateClientDTO
-) => Promise<TAuthenticateClientResult>;
+export type TLoginUseCase = (dto: TLoginDTO) => Promise<TLoginResult>;

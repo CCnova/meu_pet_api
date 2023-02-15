@@ -1,35 +1,28 @@
-import { mock } from "jest-mock-extended";
-import { EStatusCode } from "../../../types";
 import {
   InternalServerError,
   ValidationError,
 } from "../../../types/errors.types";
-import {
-  TRegisterClientRequest,
-  TRegisterClientResponse,
-} from "../contracts/controllers.contracts";
+import { makeClient } from "../../factories";
+import { TRegisterClientRequest } from "../contracts/controllers.contracts";
 import makeRegisterClientController from "./registerClient.controller";
 
 describe("RegisterClientController", () => {
   const registerClient = jest.fn();
-  const request = mock<TRegisterClientRequest>();
-  const response = {
-    statusCode: undefined,
-    status(code: EStatusCode) {
-      this.statusCode = code;
-      return this;
+  const request: TRegisterClientRequest = {
+    body: {
+      ...makeClient(),
+      pets: [],
     },
-    send(data: any) {
-      return data;
-    },
-  } as any as TRegisterClientResponse;
+    params: {},
+    query: {},
+  };
 
   it("should execute createClientUseCase", async () => {
     // given
     const sut = makeRegisterClientController(registerClient);
 
     // when
-    await sut(request, response);
+    await sut(request);
 
     // then
     expect(registerClient).toBeCalledTimes(1);
@@ -42,7 +35,7 @@ describe("RegisterClientController", () => {
     const sut = makeRegisterClientController(registerClient);
 
     // when
-    const result = await sut(request, response);
+    const result = await sut(request);
 
     // then
     expect(result.body).toEqual({ error: expectedError });
@@ -55,7 +48,7 @@ describe("RegisterClientController", () => {
     const sut = makeRegisterClientController(registerClient);
 
     // when
-    const result = await sut(request, response);
+    const result = await sut(request);
 
     // then
     expect(result.body).toEqual({ error: expectedError });

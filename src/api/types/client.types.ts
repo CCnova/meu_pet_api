@@ -7,5 +7,6 @@ export interface IClientWithPets extends ClientUser {
 }
 
 export type TAuthenticatedClientInfo = {
+  user: Omit<IClient, "password">;
   token: string;
 };

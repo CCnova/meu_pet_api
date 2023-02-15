@@ -2,11 +2,11 @@ import { NotFoundError, ValidationError } from "../../../types/errors.types";
 import { compare } from "../../../utils";
 import { ClientModel } from "../../models";
 import { generateToken } from "../../utils";
-import { IClientDatabase, TAuthenticateClientUseCase } from "../contracts";
+import { IClientDatabase, TLoginUseCase } from "../contracts";
 
-export default function makeAuthenticateClientUseCase(
+export default function makeLoginUseCase(
   clientRepo: IClientDatabase
-): TAuthenticateClientUseCase {
+): TLoginUseCase {
   return async (dto) => {
     const dtoValidations = {
       email: ClientModel.isValidEmail,
@@ -24,6 +24,8 @@ export default function makeAuthenticateClientUseCase(
 
     const token = generateToken(user, "1h");
 
-    return { token };
+    const { password: _, ...publicUserData } = user;
+
+    return { user: publicUserData, token };
   };
 }

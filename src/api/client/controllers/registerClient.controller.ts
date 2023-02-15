@@ -66,7 +66,9 @@ export default function makeRegisterClientController(
     const bodyValidationResult = validateRequestBody(request.body);
 
     if (!bodyValidationResult.isValid)
-      handleValidationError(bodyValidationResult.error as ValidationError);
+      return handleValidationError(
+        bodyValidationResult.error as ValidationError
+      );
 
     const registerClientResult = await registerClient(request.body);
 

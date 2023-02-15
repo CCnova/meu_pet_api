@@ -3,7 +3,12 @@ import {
   InternalServerError,
   ValidationError,
 } from "../../../types/errors.types";
-import { IClient, IClientWithPets, IPet } from "../../types";
+import {
+  IClient,
+  IClientWithPets,
+  IPet,
+  TAuthenticatedClientInfo,
+} from "../../types";
 
 export type TRegisterClientRequestBody = Omit<IClient, "id"> & {
   pets: Omit<IPet, "id" | "ownerId">[];
@@ -19,3 +24,17 @@ export type TRegisterClientController = TApiController<
   TRegisterClientRequest,
   TRegisterClientResponse
 >;
+
+export type TLoginRequestBody = {
+  email: string;
+  password: string;
+};
+export type TLoginRequest = TRequest<TLoginRequestBody>;
+
+export type TLoginResponseBody = {
+  data?: TAuthenticatedClientInfo;
+  error?: ValidationError | InternalServerError;
+};
+export type TLoginResponse = TResponse<TLoginResponseBody>;
+
+export type TLoginController = TApiController<TLoginRequest, TLoginResponse>;

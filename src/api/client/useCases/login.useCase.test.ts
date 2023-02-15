@@ -4,14 +4,14 @@ import { encrypt } from "../../../utils";
 import { ClientModel } from "../../models";
 import { IClient, TAuthenticatedClientInfo } from "../../types";
 import { IClientDatabase } from "../contracts";
-import makeAuthenticateClientUseCase from "./authenticateClient.useCase";
+import makeLoginUseCase from "./login.useCase";
 
 describe("AuthenticateClientUseCase", () => {
   const clientRepo = mock<IClientDatabase>();
 
   it("shound return a validation error when Model.validate returns error", async () => {
     // given
-    const sut = makeAuthenticateClientUseCase(clientRepo);
+    const sut = makeLoginUseCase(clientRepo);
     const expectedError = new ValidationError("any-validation-error");
     jest.spyOn(ClientModel, "validate").mockReturnValueOnce(expectedError);
     const dto = {
@@ -28,7 +28,7 @@ describe("AuthenticateClientUseCase", () => {
 
   it("shound return a not found error when repo.findOne returns null", async () => {
     // given
-    const sut = makeAuthenticateClientUseCase(clientRepo);
+    const sut = makeLoginUseCase(clientRepo);
     const dto = {
       email: "invalid@email.com",
       password: "any-password",
@@ -47,7 +47,7 @@ describe("AuthenticateClientUseCase", () => {
 
   it("should return a valid auth token", async () => {
     // given
-    const sut = makeAuthenticateClientUseCase(clientRepo);
+    const sut = makeLoginUseCase(clientRepo);
     const password = await encrypt("valid-password");
     const user: IClient = {
       address: "valid-address",
@@ -76,7 +76,7 @@ describe("AuthenticateClientUseCase", () => {
 
   it("should return a validation error when password is invalid", async () => {
     // given
-    const sut = makeAuthenticateClientUseCase(clientRepo);
+    const sut = makeLoginUseCase(clientRepo);
     const password = await encrypt("valid-password");
     const user: IClient = {
       address: "valid-address",
