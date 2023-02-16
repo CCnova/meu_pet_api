@@ -1,12 +1,12 @@
-import { EStatusCode } from "../../../types";
+import { TRegisterClientUseCase } from "@meu-pet/api/client/contracts";
+import { IClientWithPets } from "@meu-pet/api/types";
 import {
+  EStatusCode,
   InternalServerError,
+  TValidationResult,
   ValidationError,
-} from "../../../types/errors.types";
-import { TValidationResult } from "../../../types/validations.types";
-import { assert, logger } from "../../../utils";
-import { IClientWithPets } from "../../types";
-import { TRegisterClientUseCase } from "../contracts";
+} from "@meu-pet/types";
+import { assert, logger } from "@meu-pet/utils";
 import {
   TRegisterClientController,
   TRegisterClientRequest,
