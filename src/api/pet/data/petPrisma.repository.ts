@@ -29,5 +29,9 @@ export default function makePetPrismaRepository(
 
       return pet;
     },
+
+    async findOne() {
+      return null;
+    },
   };
 }
