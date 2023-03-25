@@ -1,6 +1,10 @@
-import { registerClient } from "../useCases";
+import { loginUseCase, registerClientUseCase } from "../useCases";
+import makeLoginController from "./login.controller";
 import makeRegisterClientController from "./registerClient.controller";
 
-const registerClientController = makeRegisterClientController(registerClient);
+const registerClientController = makeRegisterClientController(
+  registerClientUseCase
+);
+const loginController = makeLoginController(loginUseCase);
 
-export { registerClientController };
+export { registerClientController, loginController };

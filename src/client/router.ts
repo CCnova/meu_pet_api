@@ -1,6 +1,6 @@
 import { expressAdapter } from "../adapters";
 import { TRouter } from "../types";
-import { registerClientController } from "./controllers";
+import { loginController, registerClientController } from "./controllers";
 
 export function setup({
   router,
@@ -11,6 +11,11 @@ export function setup({
 }) {
   router.post(
     `${basePath}/register`,
-    expressAdapter.adaptRoute(registerClientController)
+    expressAdapter.adaptController(registerClientController)
+  );
+
+  router.post(
+    `${basePath}/login`,
+    expressAdapter.adaptController(loginController)
   );
 }

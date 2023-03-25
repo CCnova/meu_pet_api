@@ -1,10 +1,13 @@
 import { PetRepository } from "../../pet/data";
 import { ClientPrismaRepository } from "../data";
+import makeLoginUseCase from "./login.useCase";
 import makeRegisterClientUseCase from "./registerClient.useCase";
 
-const registerClient = makeRegisterClientUseCase({
+const registerClientUseCase = makeRegisterClientUseCase({
   clientRepo: new ClientPrismaRepository(),
   petRepo: PetRepository,
 });
 
-export { registerClient };
+const loginUseCase = makeLoginUseCase(new ClientPrismaRepository());
+
+export { registerClientUseCase, loginUseCase };
