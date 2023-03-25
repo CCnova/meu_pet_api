@@ -5,7 +5,7 @@ export type TExpressRouteAdapter = (
   controller: TApiController<any, any>
 ) => RequestHandler;
 
-export const adaptRoute: TExpressRouteAdapter =
+export const adaptController: TExpressRouteAdapter =
   (controller) => async (request, response) => {
     const result = await controller({
       body: request.body,
@@ -13,9 +13,8 @@ export const adaptRoute: TExpressRouteAdapter =
       query: request.query,
     });
 
-    response.status(result.statusCode)
+    response.status(result.statusCode);
     if (result.body.error)
       return response.send({ error: result.body.error.message });
-    else
-      return response.send(result.body)
+    else return response.send(result.body);
   };
