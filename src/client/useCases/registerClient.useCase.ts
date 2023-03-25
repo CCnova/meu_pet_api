@@ -4,7 +4,7 @@ import { TCreateClientResult } from "../../models/client.model";
 import { TCreatePetResult } from "../../models/pet.model";
 import { IPetDatabase } from "../../pet/contracts";
 import { InternalServerError, ValidationError } from "../../types/errors.types";
-import { fns } from "../../utils";
+import { fns, logger } from "../../utils";
 import { IClientDatabase } from "../contracts/data.contracts";
 import { TRegisterClientUseCase } from "../contracts/useCases.contracts";
 import { IClient } from "../types";
@@ -74,6 +74,8 @@ export default function makeRegisterClientUseCase(params: {
         })
       )
       .catch((error) => {
+        logger.log.error(`An error has occurred while trying to persis the client user error=${error}`);
+
         // Todo(CCnova): unit test this case
         revertUseCase({
           client: createClientResult,
@@ -82,7 +84,7 @@ export default function makeRegisterClientUseCase(params: {
           petRepo: params.petRepo,
         });
         return new InternalServerError(
-          `An unknown error has occurred while trying to register new client user with dto=${dto}, error=${error}`
+          `An unknown error has occurred while trying to register new client user. If this persist, please contact support`
         );
       });
   };

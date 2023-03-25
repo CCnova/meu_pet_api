@@ -37,7 +37,7 @@ export function isValidCpf(value: any): boolean {
 }
 
 export function isDate(value: any): boolean {
-  return value instanceof Date;
+  return value instanceof Date || !isNaN(new Date(value).getTime());
 }
 
 export function isOneOf<V>(value: V, values: V[]) {

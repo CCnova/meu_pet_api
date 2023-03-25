@@ -2,7 +2,8 @@ import { IPet } from "@meu-pet/pet/types";
 import { InternalServerError, ValidationError } from "../../types/errors.types";
 import { IClient, IClientWithPets, TAuthenticatedClientInfo } from "../types";
 
-export type TRegisterClientDTO = Omit<IClient, "id"> & {
+export type TRegisterClientDTO = Omit<IClient, "id" | "dateOfBirth"> & {
+  dateOfBirth: string;
   pets: Omit<IPet, "id" | "ownerId">[];
 };
 

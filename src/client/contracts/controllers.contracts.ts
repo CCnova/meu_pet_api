@@ -3,7 +3,8 @@ import { TApiController, TRequest, TResponse } from "../../types";
 import { InternalServerError, ValidationError } from "../../types/errors.types";
 import { IClient, IClientWithPets, TAuthenticatedClientInfo } from "../types";
 
-export type TRegisterClientRequestBody = Omit<IClient, "id"> & {
+export type TRegisterClientRequestBody = Omit<IClient, "id" | "dateOfBirth"> & {
+  dateOfBirth: string;
   pets: Omit<IPet, "id" | "ownerId">[];
 };
 export type TRegisterClientRequest = TRequest<TRegisterClientRequestBody>;

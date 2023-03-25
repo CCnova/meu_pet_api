@@ -1,5 +1,6 @@
+import { IClient } from "@meu-pet/client";
+import { TRegisterClientRequestBody } from "@meu-pet/client/contracts/controllers.contracts";
 import * as crypto from "crypto";
-import { IClient } from "../api/types";
 
 export function makeClient(): IClient {
   return {
@@ -13,5 +14,20 @@ export function makeClient(): IClient {
     id: crypto.randomUUID(),
     password: "fake-password",
     type: "TUTOR",
+  };
+}
+
+export function makeRegisterClientRequestBody(): TRegisterClientRequestBody {
+  return {
+    address: "fake-address",
+    avatar: "fake-avatar",
+    cpf: "12345678910",
+    dateOfBirth: "01/01/1990",
+    email: "fake@email.com",
+    firstName: "Fake",
+    lastName: "Name",
+    password: "fake-password",
+    type: "TUTOR",
+    pets: []
   };
 }

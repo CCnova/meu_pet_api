@@ -18,8 +18,8 @@ function isValidPassword(password: string): TValidationResult {
     error: satisfiesLength
       ? null
       : new ValidationError(
-          `password must be at minimum length = ${MIN_PASSWORD_LENGTH}`
-        ),
+        `password must be at minimum length = ${MIN_PASSWORD_LENGTH}`
+      ),
   };
 }
 
@@ -91,7 +91,9 @@ function isValidType(type: string): TValidationResult {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare function isValidAvatar(avatar: string): TValidationResult;
 
-export type TCreateClientParams = Omit<IClient, "id">;
+export type TCreateClientParams = Omit<IClient, "id" | "dateOfBirth"> & {
+  dateOfBirth: string;
+};
 export type TCreateClientResult = IClient | ValidationError;
 
 export default function makeClientModel(idGenerator: IIdGenerator) {
@@ -115,14 +117,15 @@ export default function makeClientModel(idGenerator: IIdGenerator) {
     isValidPassword,
     validate: validationUtils.modelValidate<Partial<IClient>>,
     createClient(params: TCreateClientParams): TCreateClientResult {
+      const clientData: Omit<IClient, "id"> = { ...params, dateOfBirth: new Date(params.dateOfBirth) }
       const validationError: Maybe<ValidationError> = this.validate(
-        params,
+        clientData,
         validations
       );
 
       return validationError
         ? validationError
-        : { id: idGenerator.generate(), ...params };
+        : { id: idGenerator.generate(), ...clientData };
     },
   };
 }

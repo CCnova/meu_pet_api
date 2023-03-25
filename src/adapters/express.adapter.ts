@@ -12,5 +12,10 @@ export const adaptRoute: TExpressRouteAdapter =
       params: request.params,
       query: request.query,
     });
-    response.status(result.statusCode).json(result.data);
+
+    response.status(result.statusCode)
+    if (result.body.error)
+      return response.send({ error: result.body.error.message });
+    else
+      return response.send(result.body)
   };

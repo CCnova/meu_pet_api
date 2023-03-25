@@ -1,15 +1,11 @@
-import { makeClient } from "../../factories";
+import { makeRegisterClientRequestBody } from "../../factories";
 import { InternalServerError, ValidationError } from "../../types/errors.types";
 import { TRegisterClientRequest } from "../contracts/controllers.contracts";
 import makeRegisterClientController from "./registerClient.controller";
-
 describe("RegisterClientController", () => {
   const registerClient = jest.fn();
   const request: TRegisterClientRequest = {
-    body: {
-      ...makeClient(),
-      pets: [],
-    },
+    body: makeRegisterClientRequestBody(),
     params: {},
     query: {},
   };

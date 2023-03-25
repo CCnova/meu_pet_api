@@ -8,26 +8,26 @@ CREATE TABLE `ProviderRole` (
 
 -- CreateTable
 CREATE TABLE `Pet` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `dateOfBirth` DATETIME(3) NOT NULL,
     `breed` VARCHAR(191) NOT NULL,
-    `ownerId` INTEGER NULL,
+    `ownerId` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Tour` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `walkerId` INTEGER NULL,
+    `id` VARCHAR(191) NOT NULL,
+    `walkerId` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `ClientUser` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `type` ENUM('TUTOR') NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `avatar` VARCHAR(191) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE `ClientUser` (
 
 -- CreateTable
 CREATE TABLE `ProviderUser` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(191) NOT NULL,
     `avatar` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `firstName` VARCHAR(255) NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE `ProviderUser` (
 CREATE TABLE `Picture` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `path` VARCHAR(191) NOT NULL,
-    `tourId` INTEGER NULL,
+    `tourId` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -70,7 +70,7 @@ CREATE TABLE `Picture` (
 CREATE TABLE `Video` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `path` VARCHAR(191) NOT NULL,
-    `tourId` INTEGER NULL,
+    `tourId` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -79,7 +79,7 @@ CREATE TABLE `Video` (
 CREATE TABLE `TourRoute` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `path` VARCHAR(191) NOT NULL,
-    `tourId` INTEGER NOT NULL,
+    `tourId` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `TourRoute_tourId_key`(`tourId`),
     PRIMARY KEY (`id`)
@@ -88,7 +88,7 @@ CREATE TABLE `TourRoute` (
 -- CreateTable
 CREATE TABLE `_ProviderRoleToProviderUser` (
     `A` INTEGER NOT NULL,
-    `B` INTEGER NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `_ProviderRoleToProviderUser_AB_unique`(`A`, `B`),
     INDEX `_ProviderRoleToProviderUser_B_index`(`B`)
@@ -96,8 +96,8 @@ CREATE TABLE `_ProviderRoleToProviderUser` (
 
 -- CreateTable
 CREATE TABLE `_PetToTour` (
-    `A` INTEGER NOT NULL,
-    `B` INTEGER NOT NULL,
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `_PetToTour_AB_unique`(`A`, `B`),
     INDEX `_PetToTour_B_index`(`B`)

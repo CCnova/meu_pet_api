@@ -46,11 +46,8 @@ function handleValidationError(error: ValidationError) {
   };
 }
 
+// TODO(CCnova): Is this function necessary?
 function handleInternalServerError(error: InternalServerError) {
-  logger.log.error(
-    `A unknown error has occurred while trying to create a new client, message=${error.message}`
-  );
-
   return {
     statusCode: EStatusCode.InternalServerError,
     body: { error },
