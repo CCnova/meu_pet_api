@@ -1,5 +1,9 @@
 import { EStatusCode } from "../../types";
-import { InternalServerError, ValidationError } from "../../types/errors.types";
+import {
+  InternalServerError,
+  NotFoundError,
+  ValidationError,
+} from "../../types/errors.types";
 import { TValidationResult } from "../../types/validations.types";
 import { assert, logger } from "../../utils";
 import { TLoginUseCase } from "../contracts";
@@ -26,8 +30,24 @@ function handleValidationError(error: ValidationError) {
   );
 
   return {
-    statusCode: EStatusCode.UnprocessableEntity,
-    body: { error },
+    statusCode: error.httpStatusCode,
+    body: {
+      error: {
+        ...error,
+        message: "Email or Password invalid",
+      } as ValidationError,
+    },
+  };
+}
+
+function handleNotFoundError(error: NotFoundError) {
+  logger.log.error(
+    `A parameter passed to register client user is invalid, message=${error.message}`
+  );
+
+  return {
+    statusCode: error.httpStatusCode,
+    body: { error: { ...error, message: "Email or Password invalid" } },
   };
 }
 
@@ -37,7 +57,7 @@ function handleInternalServerError(error: InternalServerError) {
   );
 
   return {
-    statusCode: EStatusCode.InternalServerError,
+    statusCode: error.httpStatusCode,
     body: { error },
   };
 }
@@ -45,7 +65,7 @@ function handleInternalServerError(error: InternalServerError) {
 export default function makeLoginController(
   login: TLoginUseCase
 ): TLoginController {
-  return async (request: TLoginRequest) => {
+  return async function (request: TLoginRequest) {
     const bodyValidationResult = validateRequestBody(request.body);
 
     if (!bodyValidationResult.isValid)
@@ -57,6 +77,8 @@ export default function makeLoginController(
 
     if (loginResult instanceof ValidationError)
       return handleValidationError(loginResult);
+    if (loginResult instanceof NotFoundError)
+      return handleNotFoundError(loginResult);
     if (loginResult instanceof InternalServerError)
       return handleInternalServerError(loginResult);
 

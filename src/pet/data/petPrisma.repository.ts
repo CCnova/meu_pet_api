@@ -1,37 +1,36 @@
+import { prisma } from "@meu-pet/libs";
 import { PrismaClient } from "@prisma/client";
 import { IPetDatabase } from "../contracts";
 import { IPet } from "../types";
 
-export default function makePetPrismaRepository(
-  prismaClient: PrismaClient
-): IPetDatabase {
-  return {
-    insert(data: IPet) {
-      return prismaClient.pet.create({ data });
-    },
+export class PetPrismaRepository {
+  constructor(private prismaClient: PrismaClient = prisma) { }
 
-    async bulkInsert(data: IPet[]) {
-      await prismaClient.pet.createMany({ data });
+  insert(data: IPet) {
+    return this.prismaClient.pet.create({ data });
+  }
 
-      return Promise.all(
-        data.map((pet) =>
-          prismaClient.pet.findFirstOrThrow({
-            where: { id: pet.id },
-          })
-        )
-      );
-    },
+  async bulkInsert(data: IPet[]) {
+    await this.prismaClient.pet.createMany({ data });
 
-    async delete(id: string) {
-      const pet = prismaClient.pet.findUnique({ where: { id } });
+    return Promise.all(
+      data.map((pet) =>
+        this.prismaClient.pet.findFirstOrThrow({
+          where: { id: pet.id },
+        })
+      )
+    );
+  }
 
-      if (pet !== null) prismaClient.pet.delete({ where: { id } });
+  async delete(id: string) {
+    const pet = this.prismaClient.pet.findUnique({ where: { id } });
 
-      return pet;
-    },
+    if (pet !== null) this.prismaClient.pet.delete({ where: { id } });
 
-    async findOne() {
-      return null;
-    },
-  };
+    return pet;
+  }
+
+  async findOne() {
+    return null;
+  }
 }

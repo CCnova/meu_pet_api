@@ -8,11 +8,9 @@ export class ApiError extends Error {
 
   constructor(
     message: string,
-    code?: string | number,
     httpStatusCode?: Maybe<number>
   ) {
     super(message);
-    this.code = code;
     if (httpStatusCode) {
       this.httpStatusCode = httpStatusCode;
     }

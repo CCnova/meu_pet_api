@@ -26,7 +26,7 @@ describe("LoginController", () => {
 
   it("should return a ValidationError when use case returns validation error", async () => {
     // given
-    const expectedError = new ValidationError("any validation error");
+    const expectedError = new ValidationError("Email or Password invalid");
     login.mockResolvedValueOnce(expectedError);
     const sut = makeLoginController(login);
 
@@ -34,7 +34,12 @@ describe("LoginController", () => {
     const result = await sut(request);
 
     // then
-    expect(result.body).toEqual({ error: expectedError });
+    expect(result.body).toEqual({
+      error: {
+        httpStatusCode: expectedError.httpStatusCode,
+        message: expectedError.message,
+      },
+    });
   });
 
   it("should return a InternalServerError when use case returns internal server error", async () => {

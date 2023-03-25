@@ -41,7 +41,7 @@ function handleValidationError(error: ValidationError) {
   );
 
   return {
-    statusCode: EStatusCode.UnprocessableEntity,
+    statusCode: error.httpStatusCode,
     body: { error },
   };
 }
@@ -49,7 +49,7 @@ function handleValidationError(error: ValidationError) {
 // TODO(CCnova): Is this function necessary?
 function handleInternalServerError(error: InternalServerError) {
   return {
-    statusCode: EStatusCode.InternalServerError,
+    statusCode: error.httpStatusCode,
     body: { error },
   };
 }
@@ -57,9 +57,9 @@ function handleInternalServerError(error: InternalServerError) {
 export default function makeRegisterClientController(
   registerClient: TRegisterClientUseCase
 ): TRegisterClientController {
-  return async (
+  return async function (
     request: TRegisterClientRequest
-  ): Promise<TRegisterClientResponse> => {
+  ): Promise<TRegisterClientResponse> {
     const bodyValidationResult = validateRequestBody(request.body);
 
     if (!bodyValidationResult.isValid)

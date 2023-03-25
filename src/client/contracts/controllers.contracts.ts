@@ -1,6 +1,12 @@
 import { IPet } from "@meu-pet/pet/types";
-import { TApiController, TRequest, TResponse } from "../../types";
-import { InternalServerError, ValidationError } from "../../types/errors.types";
+import {
+  InternalServerError,
+  NotFoundError,
+  TApiController,
+  TRequest,
+  TResponse,
+  ValidationError,
+} from "@meu-pet/types";
 import { IClient, IClientWithPets, TAuthenticatedClientInfo } from "../types";
 
 export type TRegisterClientRequestBody = Omit<IClient, "id" | "dateOfBirth"> & {
@@ -27,7 +33,7 @@ export type TLoginRequest = TRequest<TLoginRequestBody>;
 
 export type TLoginResponseBody = {
   data?: TAuthenticatedClientInfo;
-  error?: ValidationError | InternalServerError;
+  error?: ValidationError | InternalServerError | NotFoundError;
 };
 export type TLoginResponse = TResponse<TLoginResponseBody>;
 
