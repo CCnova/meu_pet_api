@@ -4,7 +4,7 @@ import { TCreateClientResult } from "../../models/client.model";
 import { TCreatePetResult } from "../../models/pet.model";
 import { IPetDatabase } from "../../pet/contracts";
 import { InternalServerError, ValidationError } from "../../types/errors.types";
-import { fns, logger } from "../../utils";
+import { encrypt, fns, logger } from "../../utils";
 import { IClientDatabase } from "../contracts/data.contracts";
 import { TRegisterClientUseCase } from "../contracts/useCases.contracts";
 import { IClient } from "../types";
@@ -46,7 +46,7 @@ export default function makeRegisterClientUseCase(params: {
   clientRepo: IClientDatabase;
   petRepo: IPetDatabase;
 }): TRegisterClientUseCase {
-  return (dto) => {
+  return async function(dto) {
     const { pets, ...clientData } = dto;
 
     const createClientResult = ClientModel.createClient(clientData);
@@ -62,9 +62,11 @@ export default function makeRegisterClientUseCase(params: {
         )
       );
 
+    const encryptedPassword = await encrypt(createClientResult.password)
+
     return persistClient({
       clientRepo: params.clientRepo,
-      modelCreateResult: createClientResult,
+      modelCreateResult: { ...createClientResult, password: encryptedPassword },
     })
       .then((persistedClient) =>
         persistPets({

@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { mockDeep } from "jest-mock-extended";
 import { ClientModel } from "../../models";
 import { IClient } from "../types";
-import makeClientPrismaRepository from "./clientPrisma.repository";
+import { ClientPrismaRepository } from "./clientPrisma.repository";
 
 describe("ClientPrismaRepository", () => {
   let prismaClient: PrismaClient;
@@ -13,13 +13,13 @@ describe("ClientPrismaRepository", () => {
 
   it("should call prismaClient.create when creating a Client", async () => {
     // given
-    const sut = makeClientPrismaRepository(prismaClient);
+    const sut = new ClientPrismaRepository(prismaClient);
     const spy = jest.spyOn(prismaClient.clientUser, "create");
     const data = ClientModel.createClient({
       address: "any-address",
       avatar: "any-avatar",
       cpf: "any-cpf",
-      dateOfBirth: new Date(),
+      dateOfBirth: '01/01/1990',
       email: "any@email.com",
       firstName: "any-first-name",
       lastName: "any-last-name",
@@ -36,12 +36,12 @@ describe("ClientPrismaRepository", () => {
 
   it("should return data when prismaClient.create returns data", async () => {
     // given
-    const sut = makeClientPrismaRepository(prismaClient);
+    const sut = new ClientPrismaRepository(prismaClient);
     const data = ClientModel.createClient({
       address: "any-address",
       avatar: "any-avatar",
       cpf: "any-cpf",
-      dateOfBirth: new Date(),
+      dateOfBirth: '01/01/1990',
       email: "any@email.com",
       firstName: "any-first-name",
       lastName: "any-last-name",

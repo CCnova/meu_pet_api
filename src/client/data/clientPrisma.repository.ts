@@ -1,37 +1,35 @@
+import { prisma } from "@meu-pet/libs";
 import { PrismaClient } from "@prisma/client";
-import { IClientDatabase } from "../contracts/data.contracts";
 import { IClient } from "../types";
 
-export default function makeClientPrismaRepository(
-  prismaClient: PrismaClient
-): IClientDatabase {
-  return {
-    insert(data: IClient) {
-      return prismaClient.clientUser.create({ data });
-    },
+export class ClientPrismaRepository {
+  constructor(private prismaClient: PrismaClient = prisma) { }
 
-    async bulkInsert(data: IClient[]) {
-      await prismaClient.clientUser.createMany({ data });
+  insert(data: IClient) {
+    return this.prismaClient.clientUser.create({ data });
+  }
 
-      return Promise.all(
-        data.map((client) =>
-          prismaClient.clientUser.findFirstOrThrow({
-            where: { id: client.id },
-          })
-        )
-      );
-    },
+  async bulkInsert(data: IClient[]) {
+    await this.prismaClient.clientUser.createMany({ data });
 
-    async delete(id: string) {
-      const client = this.findOne({ id });
+    return Promise.all(
+      data.map((client) =>
+        this.prismaClient.clientUser.findFirstOrThrow({
+          where: { id: client.id },
+        })
+      )
+    );
+  }
 
-      if (client !== null) prismaClient.clientUser.delete({ where: { id } });
+  async delete(id: string) {
+    const client = this.findOne({ id });
 
-      return client;
-    },
+    if (client !== null) this.prismaClient.clientUser.delete({ where: { id } });
 
-    async findOne(where: Partial<IClient>) {
-      return prismaClient.clientUser.findUnique({ where });
-    },
-  };
+    return client;
+  }
+
+  async findOne(where: Partial<IClient>) {
+    return this.prismaClient.clientUser.findUnique({ where });
+  }
 }

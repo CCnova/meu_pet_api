@@ -1,4 +1,4 @@
-import { validationUtils } from "@meu-pet/utils";
+import { encrypt, validationUtils } from "@meu-pet/utils";
 import { ClientUserType } from "@prisma/client";
 import { MIN_PASSWORD_LENGTH } from "../client/constants";
 import { IClient } from "../client/types";
@@ -125,7 +125,7 @@ export default function makeClientModel(idGenerator: IIdGenerator) {
 
       return validationError
         ? validationError
-        : { id: idGenerator.generate(), ...clientData };
+        : { ...clientData, id: idGenerator.generate() };
     },
   };
 }

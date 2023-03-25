@@ -12,6 +12,10 @@ jest.mock("../../models/index.ts", () => ({
   PetModel: mock<typeof PetModel>(),
 }));
 
+jest.mock("../../utils/encryption.utils.ts", () => ({
+  encrypt: jest.fn().mockResolvedValue('encrypted password')
+}))
+
 describe("RegisterClientUseCase", () => {
   const clientRepo = mock<IClientDatabase>();
   const petRepo = mock<IPetDatabase>();
@@ -45,7 +49,7 @@ describe("RegisterClientUseCase", () => {
     };
     jest
       .spyOn(ClientModel, "createClient")
-      .mockReturnValueOnce({ id: "any-id", ...dto });
+      .mockReturnValueOnce({ ...dto, id: "any-id", dateOfBirth: new Date(dto.dateOfBirth) });
 
     // when
     await sut(dto);
