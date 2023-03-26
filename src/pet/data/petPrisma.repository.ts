@@ -3,8 +3,8 @@ import { PrismaClient } from "@prisma/client";
 import { IPetDatabase } from "../contracts";
 import { IPet } from "../types";
 
-export class PetPrismaRepository {
-  constructor(private prismaClient: PrismaClient = prisma) { }
+export class PetPrismaRepository implements IPetDatabase {
+  constructor(private prismaClient: PrismaClient = prisma) {}
 
   insert(data: IPet) {
     return this.prismaClient.pet.create({ data });

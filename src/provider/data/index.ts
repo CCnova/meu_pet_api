@@ -1,0 +1,1 @@
+export * from "./providerPrisma.repository";

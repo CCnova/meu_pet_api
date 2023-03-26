@@ -1,6 +1,5 @@
-import { encrypt, validationUtils } from "@meu-pet/utils";
+import { validationUtils } from "@meu-pet/utils";
 import { ClientUserType } from "@prisma/client";
-import { MIN_PASSWORD_LENGTH } from "../client/constants";
 import { IClient } from "../client/types";
 import { IIdGenerator } from "../contracts/models.contracts";
 import { Maybe } from "../types";
@@ -11,6 +10,9 @@ import {
 } from "../types/validations.types";
 import { guard } from "../utils";
 
+export const MIN_PASSWORD_LENGTH = 6;
+export const MIN_CLIENT_USER_AGE = 18;
+
 function isValidPassword(password: string): TValidationResult {
   const satisfiesLength = password.length >= MIN_PASSWORD_LENGTH;
   return {
@@ -18,8 +20,8 @@ function isValidPassword(password: string): TValidationResult {
     error: satisfiesLength
       ? null
       : new ValidationError(
-        `password must be at minimum length = ${MIN_PASSWORD_LENGTH}`
-      ),
+          `password must be at minimum length = ${MIN_PASSWORD_LENGTH}`
+        ),
   };
 }
 
@@ -117,15 +119,17 @@ export default function makeClientModel(idGenerator: IIdGenerator) {
     isValidPassword,
     validate: validationUtils.modelValidate<Partial<IClient>>,
     createClient(params: TCreateClientParams): TCreateClientResult {
-      const clientData: Omit<IClient, "id"> = { ...params, dateOfBirth: new Date(params.dateOfBirth) }
+      const clientData: IClient = {
+        ...params,
+        dateOfBirth: new Date(params.dateOfBirth),
+        id: idGenerator.generate(),
+      };
       const validationError: Maybe<ValidationError> = this.validate(
         clientData,
         validations
       );
 
-      return validationError
-        ? validationError
-        : { ...clientData, id: idGenerator.generate() };
+      return validationError ? validationError : clientData;
     },
   };
 }

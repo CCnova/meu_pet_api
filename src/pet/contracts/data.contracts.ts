@@ -1,4 +1,4 @@
-import { IPet } from "../../api/types";
-import { IDatabase } from "../../contracts/data.contracts";
+import { ICRUDDatabase } from "../../contracts/data.contracts";
+import { IPet } from "../types";
 
-export interface IPetDatabase extends IDatabase<IPet> {}
+export interface IPetDatabase extends ICRUDDatabase<IPet> {}

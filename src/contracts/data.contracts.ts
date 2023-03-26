@@ -1,4 +1,4 @@
-export interface IDatabase<EntityType> {
+export interface ICRUDDatabase<EntityType> {
   insert: (data: EntityType) => Promise<EntityType>;
   bulkInsert: (data: EntityType[]) => Promise<EntityType[]>;
   delete: (id: string) => Promise<EntityType | null>;

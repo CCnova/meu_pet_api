@@ -1,10 +1,12 @@
 import { mock } from "jest-mock-extended";
-import { MIN_PASSWORD_LENGTH } from "../client/constants";
 import { IClient } from "../client/types";
 import { IIdGenerator } from "../contracts/models.contracts";
 import { ValidationError } from "../types/errors.types";
 import { guard } from "../utils";
-import makeClientModel, { TCreateClientParams } from "./client.model";
+import makeClientModel, {
+  MIN_PASSWORD_LENGTH,
+  TCreateClientParams,
+} from "./client.model";
 
 jest.mock("../utils/guard.utils.ts", () => ({
   __esModule: true,
@@ -15,29 +17,30 @@ describe("ClientModel", () => {
   const idGenerator = mock<IIdGenerator>();
   jest.spyOn(guard, "isValidCpf").mockReturnValue(true);
 
-  it("createClient should create a Client", async () => {
+  it("createClient should create a Client", () => {
     // given
     const sut = makeClientModel(idGenerator);
     const insertData: TCreateClientParams = {
-      address: "any-address",
-      avatar: "any-avatar",
-      cpf: "any-cpf",
-      dateOfBirth: new Date("12-11-1996"),
-      email: "any@email.com",
-      firstName: "any-first-name",
-      lastName: "any-last-name",
-      password: "any-password",
+      address: "valid-address",
+      avatar: "valid-avatar",
+      cpf: "valid-cpf",
+      dateOfBirth: "12-11-1996",
+      email: "valid@email.com",
+      firstName: "valid-first-name",
+      lastName: "valid-last-name",
+      password: "valid-password",
       type: "TUTOR",
     };
     const id = "random-id";
     jest.spyOn(idGenerator, "generate").mockReturnValueOnce(id);
     const mockUser: IClient = {
-      id,
       ...insertData,
+      id,
+      dateOfBirth: new Date(insertData.dateOfBirth),
     };
 
     // when
-    const result = await sut.createClient(insertData);
+    const result = sut.createClient(insertData);
 
     // then
     expect(result).toEqual(mockUser);
