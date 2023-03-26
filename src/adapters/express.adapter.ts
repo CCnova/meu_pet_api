@@ -13,8 +13,7 @@ export const adaptController: TExpressRouteAdapter =
       query: request.query,
     });
 
-    response.status(result.statusCode);
-    if (result.body.error)
-      return response.send({ error: result.body.error.message });
-    else return response.send(result.body);
+    return response
+      .status(result.statusCode)
+      .send({ data: result.body.data, error: result.body.error });
   };
