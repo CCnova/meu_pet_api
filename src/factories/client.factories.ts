@@ -2,7 +2,7 @@ import { IClient } from "@meu-pet/client";
 import { TRegisterClientRequestBody } from "@meu-pet/client/contracts/controllers.contracts";
 import * as crypto from "crypto";
 
-export function makeClient(): IClient {
+export function makeMockClient(): IClient {
   return {
     address: "fake-address",
     avatar: "fake-avatar",
@@ -28,6 +28,6 @@ export function makeRegisterClientRequestBody(): TRegisterClientRequestBody {
     lastName: "Name",
     password: "fake-password",
     type: "TUTOR",
-    pets: []
+    pets: [],
   };
 }
