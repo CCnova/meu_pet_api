@@ -52,6 +52,15 @@ function isValidDateOfBirth(dob: Date): TValidationResult {
   };
 }
 
+function isValidEmail(email: string): TValidationResult {
+  const isEmail = guard.isEmail(email);
+
+  return {
+    isValid: isEmail,
+    error: isEmail ? null : new ValidationError("email is invalid"),
+  };
+}
+
 export type TCreateProviderParams = Omit<IProvider, "id" | "dateOfBirth"> & {
   dateOfBirth: string;
 };
@@ -63,6 +72,7 @@ export default function makeProviderModel(idGenerator: IIdGenerator) {
     firstName: isValidFirstName,
     lastName: isValidLastName,
     password: isValidPassword,
+    email: isValidEmail,
   };
 
   return {
@@ -70,6 +80,7 @@ export default function makeProviderModel(idGenerator: IIdGenerator) {
     isValidFirstName,
     isValidLastName,
     isValidPassword,
+    isValidEmail,
     validate: validationUtils.modelValidate<Partial<IProvider>>,
     createProvider(params: TCreateProviderParams) {
       const providerData: IProvider = {

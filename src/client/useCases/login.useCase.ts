@@ -22,7 +22,7 @@ export default function makeLoginUseCase(
     const isPasswordValid = await compare(dto.password, user.password);
     if (!isPasswordValid) return new ValidationError("Invalid password");
 
-    const token = authenticationUtils.generateToken(user, "1h");
+    const token = authenticationUtils.generateJwtToken(user, "1h");
 
     const { password: _, ...publicUserData } = user;
 
