@@ -1,6 +1,7 @@
 import { ProviderModel } from "@meu-pet/models";
 import { NotFoundError, ValidationError } from "@meu-pet/types";
-import { authenticationUtils, compare } from "@meu-pet/utils";
+import { TEncryptionCompareFn } from "@meu-pet/utils";
+import { TAuthTokenGenerator } from "@meu-pet/utils/authentication.utils";
 import {
   IProviderDatabase,
   TLoginDTO,
@@ -10,6 +11,8 @@ import {
 
 export default function makeLoginUseCase(dependencies: {
   providerRepository: IProviderDatabase;
+  encryptionCompareFn: TEncryptionCompareFn;
+  authenticationTokenGeneratorFn: TAuthTokenGenerator;
 }): TLoginUseCase {
   return async function (dto: TLoginDTO): Promise<TLoginResult> {
     const dtoValidations = {
@@ -27,11 +30,14 @@ export default function makeLoginUseCase(dependencies: {
         `Provider user with email=${dto.email} not found`
       );
 
-    const passwordValid = await compare(dto.password, user.password);
+    const passwordValid = await dependencies.encryptionCompareFn(
+      dto.password,
+      user.password
+    );
     if (!passwordValid) return new ValidationError("Invalid password");
 
     // Todo(CCnova): This expiration value should be in a constants file
-    const token = authenticationUtils.generateJwtToken(user, "1h");
+    const token = dependencies.authenticationTokenGeneratorFn(user, "1h");
 
     const { password: _, ...publicUserData } = user; // We don't want to expose the password
 

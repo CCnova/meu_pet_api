@@ -1,6 +1,6 @@
 import { IProvider } from "@meu-pet/provider";
+import { TLoginDTO, TRegisterProviderDTO } from "@meu-pet/provider/contracts";
 import { TRegisterProviderRequestBody } from "@meu-pet/provider/contracts/controllers.contracts";
-import { TRegisterProviderDTO } from "@meu-pet/provider/contracts/useCases.contracts";
 import * as crypto from "crypto";
 
 export function createMRegisterProviderDTO(): TRegisterProviderDTO {
@@ -14,7 +14,7 @@ export function createMRegisterProviderDTO(): TRegisterProviderDTO {
   };
 }
 
-export function createMProvider(): IProvider {
+export function createMProvider(attrs?: Partial<IProvider>): IProvider {
   return {
     id: crypto.randomUUID(),
     avatar: "fake-avatar",
@@ -23,6 +23,7 @@ export function createMProvider(): IProvider {
     firstName: "fake-first-name",
     lastName: "fake-last-name",
     password: "123456",
+    ...attrs,
   };
 }
 
@@ -33,6 +34,13 @@ export function createMRegisterProviderRequestBody(): TRegisterProviderRequestBo
     email: "fake@email",
     firstName: "fake-first-name",
     lastName: "fake-last-name",
+    password: "123456",
+  };
+}
+
+export function createMLoginProviderDTO(): TLoginDTO {
+  return {
+    email: "valid@email.com",
     password: "123456",
   };
 }

@@ -1,12 +1,12 @@
 import { mock } from "jest-mock-extended";
-import { IClient, TAuthenticatedClientInfo } from "../../api/types";
 import { ClientModel } from "../../models";
 import { NotFoundError, ValidationError } from "../../types/errors.types";
 import { encrypt } from "../../utils";
 import { IClientDatabase } from "../contracts";
+import { IClient, TAuthenticatedClientInfo } from "../types";
 import makeLoginUseCase from "./login.useCase";
 
-describe("AuthenticateClientUseCase", () => {
+describe("Client LoginUseCase", () => {
   const clientRepo = mock<IClientDatabase>();
 
   it("shound return a validation error when Model.validate returns error", async () => {
