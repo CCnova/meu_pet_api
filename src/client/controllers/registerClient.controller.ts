@@ -27,7 +27,7 @@ function validateRequestBody(
     assert.isString(body.password, "password must be a string");
     assert.isString(body.type, "type must be a string");
 
-    if (body.avatar) assert.isString(body.avatar, "");
+    if (body.avatar) assert.isString(body.avatar, "avatar must be a string");
 
     return { isValid: true, error: null };
   } catch (validationError) {
@@ -54,6 +54,14 @@ function handleInternalServerError(error: InternalServerError) {
   };
 }
 
+// TODO(CCnova): Is this function necessary?
+function handleAcceptedCase(data: IClientWithPets) {
+  return {
+    statusCode: EStatusCode.Accepted,
+    body: { data },
+  };
+}
+
 export default function makeRegisterClientController(
   registerClient: TRegisterClientUseCase
 ): TRegisterClientController {
@@ -73,9 +81,8 @@ export default function makeRegisterClientController(
       return handleValidationError(registerClientResult);
     if (registerClientResult instanceof InternalServerError)
       return handleInternalServerError(registerClientResult);
-    return {
-      statusCode: EStatusCode.Accepted,
-      body: { data: registerClientResult as IClientWithPets },
-    };
+
+    // Todo(CCnova): Handle ValidationError[] case
+    return handleAcceptedCase(registerClientResult as IClientWithPets);
   };
 }

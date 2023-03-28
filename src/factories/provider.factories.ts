@@ -1,4 +1,5 @@
 import { IProvider } from "@meu-pet/provider";
+import { TRegisterProviderRequestBody } from "@meu-pet/provider/contracts/controllers.contracts";
 import { TRegisterProviderDTO } from "@meu-pet/provider/contracts/useCases.contracts";
 import * as crypto from "crypto";
 
@@ -18,6 +19,17 @@ export function createMProvider(): IProvider {
     id: crypto.randomUUID(),
     avatar: "fake-avatar",
     dateOfBirth: new Date("01/01/1990"),
+    email: "fake@email",
+    firstName: "fake-first-name",
+    lastName: "fake-last-name",
+    password: "123456",
+  };
+}
+
+export function createMRegisterProviderRequestBody(): TRegisterProviderRequestBody {
+  return {
+    avatar: "fake-avatar",
+    dateOfBirth: "01/01/1990",
     email: "fake@email",
     firstName: "fake-first-name",
     lastName: "fake-last-name",
