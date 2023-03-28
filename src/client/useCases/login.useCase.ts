@@ -7,7 +7,7 @@ import { IClientDatabase, TLoginUseCase } from "../contracts";
 export default function makeLoginUseCase(
   clientRepo: IClientDatabase
 ): TLoginUseCase {
-  return async (dto) => {
+  return async function (dto) {
     const dtoValidations = {
       email: ClientModel.isValidEmail,
       password: ClientModel.isValidPassword,
@@ -20,8 +20,7 @@ export default function makeLoginUseCase(
       return new NotFoundError(`user with email=${dto.email} not found`);
 
     const isPasswordValid = await compare(dto.password, user.password);
-    if (!isPasswordValid)
-      return new ValidationError("Invalid password");
+    if (!isPasswordValid) return new ValidationError("Invalid password");
 
     const token = authenticationUtils.generateToken(user, "1h");
 
