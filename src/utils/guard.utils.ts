@@ -43,3 +43,11 @@ export function isDate(value: any): boolean {
 export function isOneOf<V>(value: V, values: V[]) {
   return values.includes(value);
 }
+
+export function isAgeBelow(dateOfBirth: Date, desiredAge: number): boolean {
+  const month = dateOfBirth.getUTCMonth() + 1; // Javascript months starts at 0 (January = 0, February = 1, ...);
+  const day = dateOfBirth.getUTCDate();
+  const year = dateOfBirth.getUTCFullYear();
+
+  return new Date(year + desiredAge, month - 1, day) <= new Date();
+}

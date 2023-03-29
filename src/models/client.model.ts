@@ -69,10 +69,7 @@ function isValidCpf(cpf: string): TValidationResult {
   };
 }
 function isValidDateOfBirth(dob: Date): TValidationResult {
-  const month = dob.getUTCMonth() + 1; // Javascript months starts at 0 (January = 0, February = 1, ...);
-  const day = dob.getUTCDate();
-  const year = dob.getUTCFullYear();
-  const isValid = new Date(year + 18, month - 1, day) <= new Date();
+  const isValid = guard.isAgeBelow(dob, 18);
 
   return {
     isValid,
