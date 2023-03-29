@@ -1,17 +1,19 @@
-import { EStatusCode } from "../../types";
 import {
+  EStatusCode,
   InternalServerError,
   NotFoundError,
+  TValidationResult,
   ValidationError,
-} from "../../types/errors.types";
-import { TValidationResult } from "../../types/validations.types";
-import { assert, logger } from "../../utils";
+} from "@meu-pet/types";
+import { assert, logger } from "@meu-pet/utils";
 import { TLoginUseCase } from "../contracts";
 import {
   TLoginController,
   TLoginRequest,
   TLoginRequestBody,
+  TLoginResponse,
 } from "../contracts/controllers.contracts";
+import { TAuthenticatedProviderInfo } from "../types";
 
 function validateRequestBody(body: TLoginRequestBody): TValidationResult {
   try {
@@ -26,7 +28,7 @@ function validateRequestBody(body: TLoginRequestBody): TValidationResult {
 
 function handleValidationError(error: ValidationError) {
   logger.log.error(
-    `A parameter passed to Client login is invalid, message=${error.message}`
+    `A parameter passed to Provider login is invalid, message=${error.message}`
   );
 
   return {
@@ -42,7 +44,7 @@ function handleValidationError(error: ValidationError) {
 
 function handleNotFoundError(error: NotFoundError) {
   logger.log.error(
-    `A parameter passed to Client login is invalid, message=${error.message}`
+    `A parameter passed to Provider login is invalid, message=${error.message}`
   );
 
   return {
@@ -58,14 +60,26 @@ function handleInternalServerError(error: InternalServerError) {
 
   return {
     statusCode: error.httpStatusCode,
-    body: { error },
+    body: {
+      error: {
+        ...error,
+        message: "A unknown error has occurred while trying to login",
+      },
+    },
   };
 }
 
-export default function makeLoginController(
-  login: TLoginUseCase
-): TLoginController {
-  return async function (request: TLoginRequest) {
+function handleAcceptedCase(data: TAuthenticatedProviderInfo) {
+  return {
+    statusCode: EStatusCode.OK,
+    body: { data },
+  };
+}
+
+export default function makeLoginController(dependencies: {
+  login: TLoginUseCase;
+}): TLoginController {
+  return async function (request: TLoginRequest): Promise<TLoginResponse> {
     const bodyValidationResult = validateRequestBody(request.body);
 
     if (!bodyValidationResult.isValid)
@@ -73,7 +87,7 @@ export default function makeLoginController(
         bodyValidationResult.error as ValidationError
       );
 
-    const loginResult = await login(request.body);
+    const loginResult = await dependencies.login(request.body);
 
     if (loginResult instanceof ValidationError)
       return handleValidationError(loginResult);
@@ -82,9 +96,6 @@ export default function makeLoginController(
     if (loginResult instanceof InternalServerError)
       return handleInternalServerError(loginResult);
 
-    return {
-      statusCode: EStatusCode.OK,
-      body: { data: loginResult },
-    };
+    return handleAcceptedCase(loginResult);
   };
 }

@@ -1,4 +1,4 @@
-import { IProvider } from "@meu-pet/provider";
+import { IProvider, TAuthenticatedProviderInfo } from "@meu-pet/provider";
 import { TLoginDTO, TRegisterProviderDTO } from "@meu-pet/provider/contracts";
 import { TRegisterProviderRequestBody } from "@meu-pet/provider/contracts/controllers.contracts";
 import * as crypto from "crypto";
@@ -42,5 +42,14 @@ export function createMLoginProviderDTO(): TLoginDTO {
   return {
     email: "valid@email.com",
     password: "123456",
+  };
+}
+
+export function createMAuthenticatedProviderInfo(): TAuthenticatedProviderInfo {
+  const { password: _, ...providerData } = createMProvider();
+
+  return {
+    user: providerData,
+    token: "auth-token",
   };
 }
