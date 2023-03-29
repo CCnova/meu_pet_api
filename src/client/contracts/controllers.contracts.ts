@@ -11,12 +11,15 @@ import { IClient, IClientWithPets, TAuthenticatedClientInfo } from "../types";
 
 export type TRegisterClientRequestBody = Omit<IClient, "id" | "dateOfBirth"> & {
   dateOfBirth: string;
-  pets: Omit<IPet, "id" | "ownerId">[];
+  pets: Array<
+    Omit<IPet, "id" | "ownerId" | "dateOfBirth"> & { dateOfBirth: string }
+  >;
 };
 export type TRegisterClientRequest = TRequest<TRegisterClientRequestBody>;
 export type TRegisterClientResponseBody = {
   data?: IClientWithPets;
   error?: ValidationError | InternalServerError;
+  errors?: ValidationError[];
 };
 export type TRegisterClientResponse = TResponse<TRegisterClientResponseBody>;
 

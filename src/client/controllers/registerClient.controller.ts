@@ -46,6 +46,21 @@ function handleValidationError(error: ValidationError) {
   };
 }
 
+function handleArrayValidationErrors(errors: ValidationError[]) {
+  return {
+    statusCode: EStatusCode.UnprocessableEntity,
+    body: {
+      errors: errors.map(
+        (error) =>
+          ({
+            httpStatusCode: error.httpStatusCode,
+            message: error.message,
+          } as ValidationError)
+      ),
+    },
+  };
+}
+
 // TODO(CCnova): Is this function necessary?
 function handleInternalServerError(error: InternalServerError) {
   return {
@@ -79,10 +94,11 @@ export default function makeRegisterClientController(
 
     if (registerClientResult instanceof ValidationError)
       return handleValidationError(registerClientResult);
+    if (registerClientResult instanceof Array<ValidationError>)
+      return handleArrayValidationErrors(registerClientResult);
     if (registerClientResult instanceof InternalServerError)
       return handleInternalServerError(registerClientResult);
 
-    // Todo(CCnova): Handle ValidationError[] case
     return handleAcceptedCase(registerClientResult as IClientWithPets);
   };
 }

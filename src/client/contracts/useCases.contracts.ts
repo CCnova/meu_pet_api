@@ -4,7 +4,10 @@ import { IClient, IClientWithPets, TAuthenticatedClientInfo } from "../types";
 
 export type TRegisterClientDTO = Omit<IClient, "id" | "dateOfBirth"> & {
   dateOfBirth: string;
-  pets: Omit<IPet, "id" | "ownerId">[];
+  // Todo(CCnova): This type is too ugly, find a way to re-use
+  pets: (Omit<IPet, "id" | "ownerId" | "dateOfBirth"> & {
+    dateOfBirth: string;
+  })[];
 };
 
 export type TRegisterClientResult =

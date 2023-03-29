@@ -1,4 +1,4 @@
-import { IClient } from "@meu-pet/client";
+import { IClient, IClientWithPets } from "@meu-pet/client";
 import { TRegisterClientRequestBody } from "@meu-pet/client/contracts/controllers.contracts";
 import * as crypto from "crypto";
 
@@ -14,6 +14,22 @@ export function makeMockClient(): IClient {
     id: crypto.randomUUID(),
     password: "fake-password",
     type: "TUTOR",
+  };
+}
+
+export function createMClientWithPets(): IClientWithPets {
+  return {
+    address: "fake-address",
+    avatar: "fake-avatar",
+    cpf: "12345678910",
+    dateOfBirth: new Date("01/01/1990"),
+    email: "fake@email.com",
+    firstName: "Fake",
+    lastName: "Name",
+    id: crypto.randomUUID(),
+    password: "fake-password",
+    type: "TUTOR",
+    pets: [],
   };
 }
 

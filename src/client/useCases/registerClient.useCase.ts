@@ -46,14 +46,16 @@ export default function makeRegisterClientUseCase(params: {
   clientRepo: IClientDatabase;
   petRepo: IPetDatabase;
 }): TRegisterClientUseCase {
-  return async function(dto) {
+  return async function (dto) {
     const { pets, ...clientData } = dto;
 
     const createClientResult = ClientModel.createClient(clientData);
     if (createClientResult instanceof ValidationError)
       return Promise.resolve(createClientResult);
 
-    const createPetsResult = pets.map((pet) => PetModel.createPet(pet));
+    const createPetsResult = pets.map((pet) =>
+      PetModel.createPet({ ...pet, ownerId: createClientResult.id })
+    );
     if (createPetsResult.some((result) => result instanceof ValidationError))
       return Promise.resolve(
         fns.filterInstancesOf<ValidationError>(
@@ -62,7 +64,7 @@ export default function makeRegisterClientUseCase(params: {
         )
       );
 
-    const encryptedPassword = await encrypt(createClientResult.password)
+    const encryptedPassword = await encrypt(createClientResult.password);
 
     return persistClient({
       clientRepo: params.clientRepo,
@@ -76,7 +78,9 @@ export default function makeRegisterClientUseCase(params: {
         })
       )
       .catch((error) => {
-        logger.log.error(`An error has occurred while trying to persis the client user error=${error}`);
+        logger.log.error(
+          `An error has occurred while trying to persis the client user error=${error}`
+        );
 
         // Todo(CCnova): unit test this case
         revertUseCase({

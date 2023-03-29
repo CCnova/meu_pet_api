@@ -1,4 +1,7 @@
-import { makeRegisterClientRequestBody } from "../../factories";
+import {
+  createMClientWithPets,
+  makeRegisterClientRequestBody,
+} from "../../factories";
 import { InternalServerError, ValidationError } from "../../types/errors.types";
 import { TRegisterClientRequest } from "../contracts/controllers.contracts";
 import makeRegisterClientController from "./registerClient.controller";
@@ -45,5 +48,36 @@ describe("RegisterClientController", () => {
 
     // then
     expect(result.body).toEqual({ error: expectedError });
+  });
+
+  it("should return ValidationError[] when useCase returns ValidationError[]", async () => {
+    // given
+    const expectedErrors = [new ValidationError("any validation error")];
+    registerClient.mockResolvedValueOnce(expectedErrors);
+    const sut = makeRegisterClientController(registerClient);
+
+    // when
+    const result = await sut(request);
+
+    // then
+    expect(result.body).toEqual({
+      errors: expectedErrors.map((error) => ({
+        httpStatusCode: error.httpStatusCode,
+        message: error.message,
+      })),
+    });
+  });
+
+  it("should return data when useCase returns data", async () => {
+    // given
+    const expectedData = createMClientWithPets();
+    registerClient.mockResolvedValueOnce(expectedData);
+    const sut = makeRegisterClientController(registerClient);
+
+    // when
+    const result = await sut(request);
+
+    // then
+    expect(result.body).toEqual({ data: expectedData });
   });
 });

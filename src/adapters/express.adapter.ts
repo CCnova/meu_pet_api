@@ -15,5 +15,9 @@ export const adaptController: TExpressRouteAdapter =
 
     return response
       .status(result.statusCode)
-      .send({ data: result.body.data, error: result.body.error });
+      .send({
+        data: result.body.data,
+        error: result.body.error,
+        errors: result.body.errors,
+      });
   };
