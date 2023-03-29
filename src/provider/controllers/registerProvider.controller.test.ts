@@ -91,7 +91,7 @@ describe("RegisterProviderController", () => {
     };
     const expectedData = createMProvider();
     const expectedResponse = {
-      statusCode: EStatusCode.Accepted,
+      statusCode: EStatusCode.Created,
       body: { data: expectedData },
     };
     registerProviderUseCase.mockResolvedValueOnce(expectedData);

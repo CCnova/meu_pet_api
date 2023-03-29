@@ -57,7 +57,7 @@ function handleInternalServerError(error: InternalServerError) {
 // TODO(CCnova): Is this function necessary?
 function handleAcceptedCase(data: IClientWithPets) {
   return {
-    statusCode: EStatusCode.Accepted,
+    statusCode: EStatusCode.Created,
     body: { data },
   };
 }

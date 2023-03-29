@@ -52,7 +52,7 @@ function handleInternalServerError(error: InternalServerError) {
 // TODO(CCnova): Is this function necessary?
 function handleAcceptedCase(data: IProvider) {
   return {
-    statusCode: EStatusCode.Accepted,
+    statusCode: EStatusCode.Created,
     body: { data },
   };
 }
