@@ -3,7 +3,11 @@ import { ClientModel, PetModel } from "../../models";
 import { TCreateClientResult } from "../../models/client.model";
 import { TCreatePetResult } from "../../models/pet.model";
 import { IPetDatabase } from "../../pet/contracts";
-import { InternalServerError, ValidationError } from "../../types/errors.types";
+import {
+  DatabaseError,
+  InternalServerError,
+  ValidationError,
+} from "../../types/errors.types";
 import { encrypt, fns, logger } from "../../utils";
 import { IClientDatabase } from "../contracts/data.contracts";
 import { TRegisterClientUseCase } from "../contracts/useCases.contracts";
@@ -66,32 +70,41 @@ export default function makeRegisterClientUseCase(params: {
 
     const encryptedPassword = await encrypt(createClientResult.password);
 
-    return persistClient({
-      clientRepo: params.clientRepo,
-      modelCreateResult: { ...createClientResult, password: encryptedPassword },
-    })
-      .then((persistedClient) =>
-        persistPets({
-          petRepo: params.petRepo,
-          pets: createPetsResult,
-          owner: persistedClient,
-        })
-      )
-      .catch((error) => {
-        logger.log.error(
-          `An error has occurred while trying to persis the client user error=${error}`
-        );
-
-        // Todo(CCnova): unit test this case
-        revertUseCase({
-          client: createClientResult,
-          pets: createPetsResult as IPet[],
-          clientRepo: params.clientRepo,
-          petRepo: params.petRepo,
-        });
-        return new InternalServerError(
-          `An unknown error has occurred while trying to register new client user. If this persist, please contact support`
-        );
+    try {
+      const persistClientResult = await persistClient({
+        clientRepo: params.clientRepo,
+        modelCreateResult: {
+          ...createClientResult,
+          password: encryptedPassword,
+        },
       });
+
+      if (persistClientResult instanceof DatabaseError) {
+        return new InternalServerError(persistClientResult.message);
+      }
+
+      const clientWithPets = persistPets({
+        petRepo: params.petRepo,
+        pets: createPetsResult,
+        owner: persistClientResult,
+      });
+
+      return clientWithPets;
+    } catch (error) {
+      logger.log.error(
+        `An error has occurred while trying to persist the client user error=${error}`
+      );
+
+      // Todo(CCnova): unit test this case
+      revertUseCase({
+        client: createClientResult,
+        pets: createPetsResult as IPet[],
+        clientRepo: params.clientRepo,
+        petRepo: params.petRepo,
+      });
+      return new InternalServerError(
+        `An unknown error has occurred while trying to register new client user. If this persist, please contact support`
+      );
+    }
   };
 }

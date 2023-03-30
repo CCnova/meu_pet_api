@@ -1,11 +1,16 @@
 import { RequestHandler } from "express";
-import { TApiController } from "../types";
+import { ApiError, TApiController } from "../types";
 
-export type TExpressRouteAdapter = (
+export const toPublicError = (apiError: ApiError) => ({
+  httpStatusCode: apiError.httpStatusCode,
+  message: apiError.message,
+});
+
+export type TExpressControllerAdapter = (
   controller: TApiController<any, any>
 ) => RequestHandler;
 
-export const adaptController: TExpressRouteAdapter =
+export const adaptController: TExpressControllerAdapter =
   (controller) => async (request, response) => {
     const result = await controller({
       body: request.body,
@@ -13,11 +18,9 @@ export const adaptController: TExpressRouteAdapter =
       query: request.query,
     });
 
-    return response
-      .status(result.statusCode)
-      .send({
-        data: result.body.data,
-        error: result.body.error,
-        errors: result.body.errors,
-      });
+    return response.status(result.statusCode).send({
+      data: result.body.data,
+      error: result.body.error ? toPublicError(result.body.error) : undefined,
+      errors: result.body.errors?.map(toPublicError),
+    });
   };

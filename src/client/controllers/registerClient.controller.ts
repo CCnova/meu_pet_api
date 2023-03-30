@@ -50,13 +50,7 @@ function handleArrayValidationErrors(errors: ValidationError[]) {
   return {
     statusCode: EStatusCode.UnprocessableEntity,
     body: {
-      errors: errors.map(
-        (error) =>
-          ({
-            httpStatusCode: error.httpStatusCode,
-            message: error.message,
-          } as ValidationError)
-      ),
+      errors,
     },
   };
 }

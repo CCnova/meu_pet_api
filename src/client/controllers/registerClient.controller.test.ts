@@ -61,10 +61,7 @@ describe("RegisterClientController", () => {
 
     // then
     expect(result.body).toEqual({
-      errors: expectedErrors.map((error) => ({
-        httpStatusCode: error.httpStatusCode,
-        message: error.message,
-      })),
+      errors: expectedErrors,
     });
   });
 

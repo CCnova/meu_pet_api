@@ -1,5 +1,9 @@
+import { prismaAdapter } from "@meu-pet/adapters";
 import { prisma } from "@meu-pet/libs";
+import { DatabaseError } from "@meu-pet/types";
+import { logger } from "@meu-pet/utils";
 import { PrismaClient } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { IClientDatabase } from "../contracts";
 import { IClient } from "../types";
 
@@ -7,7 +11,16 @@ export class ClientPrismaRepository implements IClientDatabase {
   constructor(private prismaClient: PrismaClient = prisma) {}
 
   insert(data: IClient) {
-    return this.prismaClient.clientUser.create({ data });
+    return this.prismaClient.clientUser.create({ data }).catch((error) => {
+      logger.log.error(
+        `An error has occurred while trying to create clientUser`,
+        error
+      );
+      if (error instanceof PrismaClientKnownRequestError)
+        return prismaAdapter.handleKnownRequestError(error);
+
+      return new DatabaseError("An unknown error has occurred");
+    }) as any;
   }
 
   async bulkInsert(data: IClient[]) {

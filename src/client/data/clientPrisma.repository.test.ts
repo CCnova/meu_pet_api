@@ -1,3 +1,4 @@
+import { makeMockClient } from "@meu-pet/factories";
 import { PrismaClient } from "@prisma/client";
 import { mockDeep } from "jest-mock-extended";
 import { ClientModel } from "../../models";
@@ -14,12 +15,14 @@ describe("ClientPrismaRepository", () => {
   it("should call prismaClient.create when creating a Client", async () => {
     // given
     const sut = new ClientPrismaRepository(prismaClient);
-    const spy = jest.spyOn(prismaClient.clientUser, "create");
+    const spy = jest
+      .spyOn(prismaClient.clientUser, "create")
+      .mockResolvedValueOnce(makeMockClient());
     const data = ClientModel.createClient({
       address: "any-address",
       avatar: "any-avatar",
       cpf: "any-cpf",
-      dateOfBirth: '01/01/1990',
+      dateOfBirth: "01/01/1990",
       email: "any@email.com",
       firstName: "any-first-name",
       lastName: "any-last-name",
@@ -41,7 +44,7 @@ describe("ClientPrismaRepository", () => {
       address: "any-address",
       avatar: "any-avatar",
       cpf: "any-cpf",
-      dateOfBirth: '01/01/1990',
+      dateOfBirth: "01/01/1990",
       email: "any@email.com",
       firstName: "any-first-name",
       lastName: "any-last-name",

@@ -1,5 +1,9 @@
 import { ProviderModel } from "@meu-pet/models";
-import { InternalServerError, ValidationError } from "@meu-pet/types";
+import {
+  DatabaseError,
+  InternalServerError,
+  ValidationError,
+} from "@meu-pet/types";
 import { encrypt, logger } from "@meu-pet/utils";
 import { IProviderDatabase } from "../contracts";
 import { TRegisterProviderUseCase } from "../contracts/useCases.contracts";
@@ -16,6 +20,12 @@ export default function makeRegisterProviderUseCase(params: {
 
     return params.providerRepo
       .insert({ ...createProviderResult, password: encryptedPassword })
+      .then((result) => {
+        if (result instanceof DatabaseError)
+          return new InternalServerError(result.message);
+
+        return result;
+      })
       .catch((error) => {
         logger.log.error(
           `An unknown error has occurred while trying to create provider error=${error.message}`
