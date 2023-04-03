@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "nodemon --exec dotenv -e ./.env -- npx ts-node src/ ",
+    "dev": "nodemon",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
     "prepare": "husky install",
