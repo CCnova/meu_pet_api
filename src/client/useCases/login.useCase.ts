@@ -1,3 +1,4 @@
+import { EUserType } from "@meu-pet/types";
 import { authenticationUtils } from "@meu-pet/utils";
 import { ClientModel } from "../../models";
 import {
@@ -27,7 +28,13 @@ export default function makeLoginUseCase(
       const isPasswordValid = await compare(dto.password, user.password);
       if (!isPasswordValid) return new ValidationError("Invalid password");
 
-      const token = authenticationUtils.generateJwtToken(user, "1h");
+      const payload = {
+        id: user.id,
+        email: user.email,
+        type: EUserType.CLIENT,
+      };
+      // Todo(CCnova): This expiration value should be in a constants file
+      const token = authenticationUtils.generateJwtToken({ payload }, "1h");
 
       const { password: _, ...publicUserData } = user;
 

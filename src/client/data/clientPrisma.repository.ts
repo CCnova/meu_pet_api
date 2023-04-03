@@ -8,7 +8,10 @@ import { IClientDatabase } from "../contracts";
 import { IClient } from "../types";
 
 export class ClientPrismaRepository implements IClientDatabase {
-  constructor(private prismaClient: PrismaClient = prisma) {}
+  constructor(
+    private prismaClient: PrismaClient = prisma,
+    private prismaErrorAdapter: prismaAdapter.IPrismaErrorAdapter = new prismaAdapter.PrismaErrorAdapter()
+  ) {}
 
   insert(data: IClient) {
     return this.prismaClient.clientUser.create({ data }).catch((error) => {
@@ -17,10 +20,10 @@ export class ClientPrismaRepository implements IClientDatabase {
         error
       );
       if (error instanceof PrismaClientKnownRequestError)
-        return prismaAdapter.handleKnownRequestError(error);
+        return this.prismaErrorAdapter.handleKnownRequestError(error);
 
       return new DatabaseError("An unknown error has occurred");
-    }) as any;
+    });
   }
 
   async bulkInsert(data: IClient[]) {

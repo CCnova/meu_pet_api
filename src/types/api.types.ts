@@ -1,5 +1,16 @@
 import * as express from "express";
 
+export enum EUserType {
+  CLIENT = "CLIENT",
+  PROVIDER = "PROVIDER",
+}
+
+export type TRequestUser = {
+  id: string;
+  email: string;
+  type: EUserType;
+};
+
 export enum EErrorMessages {
   InternalServerError = "An unknown error has ocurred",
   AuthenticationError = "Email or Password is invalid",
@@ -175,6 +186,8 @@ export type TRequest<
   body: RequestBody;
   params: RequestParams;
   query: RequestQuery;
+  headers?: { [key: string]: any };
+  user?: TRequestUser;
 };
 
 export type TResponse<ResponseBody = TOKResponseBody> = {
@@ -191,5 +204,9 @@ export interface IHttpProtocolAdapter {
 }
 
 export type TApiController<RequestType, ResponseType> = (
+  request: RequestType
+) => Promise<ResponseType>;
+
+export type TApiMiddleware<RequestType, ResponseType> = (
   request: RequestType
 ) => Promise<ResponseType>;

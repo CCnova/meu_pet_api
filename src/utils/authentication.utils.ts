@@ -11,6 +11,8 @@ export const generateJwtToken: TAuthTokenGenerator = (
   expiresIn: string | number
 ) => jsonwebtoken.sign(payload, JWT_SECRET as string, { expiresIn });
 
-export const verifyJwtToken = (token: string) => {
+export type TAuthTokenVerificator = (token: string) => any;
+
+export const verifyJwtToken: TAuthTokenVerificator = (token: string) => {
   return jsonwebtoken.verify(token, JWT_SECRET as string);
 };

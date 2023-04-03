@@ -1,5 +1,6 @@
 import { ProviderModel } from "@meu-pet/models";
 import {
+  EUserType,
   InternalServerError,
   NotFoundError,
   ValidationError,
@@ -41,8 +42,16 @@ export default function makeLoginUseCase(dependencies: {
       );
       if (!passwordValid) return new ValidationError("Invalid password");
 
+      const payload = {
+        id: user.id,
+        email: user.email,
+        type: EUserType.PROVIDER,
+      };
       // Todo(CCnova): This expiration value should be in a constants file
-      const token = dependencies.authenticationTokenGeneratorFn(user, "1h");
+      const token = dependencies.authenticationTokenGeneratorFn(
+        { payload },
+        "1h"
+      );
 
       const { password: _, ...publicUserData } = user; // We don't want to expose the password
 

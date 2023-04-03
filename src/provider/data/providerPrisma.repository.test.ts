@@ -1,4 +1,5 @@
 import { ProviderModel } from "@meu-pet/models";
+import { DatabaseError } from "@meu-pet/types";
 import { PrismaClient } from "@prisma/client";
 import { mockDeep } from "jest-mock-extended";
 import { IProvider } from "../types";
@@ -14,7 +15,9 @@ describe("ProviderPrismaRepository", () => {
   it("should call prismaClient.create when creating a provider", async () => {
     // given
     const sut = new ProviderPrismaRepository(prismaClient);
-    const spy = jest.spyOn(prismaClient.providerUser, "create");
+    const spy = jest
+      .spyOn(prismaClient.providerUser, "create")
+      .mockImplementationOnce(() => Promise.resolve() as any);
     const data = ProviderModel.createProvider({
       avatar: "valid-avatar",
       dateOfBirth: "01/01/1990",
@@ -51,5 +54,27 @@ describe("ProviderPrismaRepository", () => {
 
     // then
     expect(result).toEqual(data);
+  });
+
+  it("should return DatabaseError when prismaClient.create throws", async () => {
+    // given
+    const sut = new ProviderPrismaRepository(prismaClient);
+    const data = ProviderModel.createProvider({
+      avatar: "valid-avatar",
+      dateOfBirth: "01/01/1990",
+      email: "valid@email.com",
+      firstName: "valid-first-name",
+      lastName: "valid-last-name",
+      password: "valid-password",
+    });
+    jest
+      .spyOn(prismaClient.providerUser, "create")
+      .mockImplementationOnce(() => Promise.reject() as any);
+
+    // when
+    const result = await sut.insert(data as IProvider);
+
+    // then
+    expect(result).toEqual(new DatabaseError("An unknown error has occurred"));
   });
 });
