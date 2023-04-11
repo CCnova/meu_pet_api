@@ -41,3 +41,21 @@ export type TLoginResponseBody = {
 export type TLoginResponse = TResponse<TLoginResponseBody>;
 
 export type TLoginController = TApiController<TLoginRequest, TLoginResponse>;
+
+export type TListUserPetsRequestBody = {
+  userId: string;
+};
+
+export type TListUserPetsRequest = TRequest<TListUserPetsRequestBody>;
+
+export type TListUserPetsResponseBody = {
+  data?: IPet[];
+  error?: ValidationError | InternalServerError;
+};
+
+export type TListUserPetsResponse = TResponse<TListUserPetsResponseBody>;
+
+export type TListUserPetsController = TApiController<
+  TListUserPetsRequest,
+  TListUserPetsResponse
+>;

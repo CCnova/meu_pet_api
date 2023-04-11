@@ -33,4 +33,8 @@ export class PetPrismaRepository implements IPetDatabase {
   async findOne() {
     return null;
   }
+
+  async list(where: Partial<IPet>) {
+    return this.prismaClient.pet.findMany({ where });
+  }
 }

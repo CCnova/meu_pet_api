@@ -5,4 +5,5 @@ export interface ICRUDDatabase<EntityType> {
   bulkInsert: (data: EntityType[]) => Promise<EntityType[]>;
   delete: (id: string) => Promise<EntityType | null>;
   findOne: (where: Partial<EntityType>) => Promise<EntityType | null>;
+  list: (where: Partial<EntityType>) => Promise<EntityType[]>;
 }

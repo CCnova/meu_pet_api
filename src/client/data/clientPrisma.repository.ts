@@ -49,4 +49,8 @@ export class ClientPrismaRepository implements IClientDatabase {
 
     return client;
   }
+
+  async list(where: Partial<IClient>) {
+    return this.prismaClient.clientUser.findMany({ where });
+  }
 }

@@ -50,4 +50,8 @@ export class ProviderPrismaRepository implements IProviderDatabase {
 
     return provider;
   }
+
+  async list(where: Partial<IProvider>) {
+    return this.prismaClient.providerUser.findMany({ where });
+  }
 }

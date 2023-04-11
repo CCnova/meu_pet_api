@@ -29,3 +29,13 @@ export type TLoginResult =
   | ValidationError
   | InternalServerError;
 export type TLoginUseCase = (dto: TLoginDTO) => Promise<TLoginResult>;
+
+export type TListUserPetsDTO = {
+  userId: string;
+};
+
+export type TListUserPetsResult = IPet[];
+
+export type TListUserPetsUseCase = (
+  dto: TListUserPetsDTO
+) => Promise<TListUserPetsResult>;

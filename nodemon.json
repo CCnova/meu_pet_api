@@ -7,5 +7,5 @@
     "src/**/*.spec.js",
     "src/**/*.test.js"
   ],
-  "exec": "dotenv -e ./.env -- npx ts-node src/"
+  "exec": "dotenv -e ./.env -- npx ts-node ./src/"
 }

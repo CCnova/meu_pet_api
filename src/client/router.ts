@@ -1,6 +1,10 @@
 import { expressAdapter } from "../adapters";
 import { TRouter } from "../types";
-import { loginController, registerClientController } from "./controllers";
+import {
+  listUserPetsController,
+  loginController,
+  registerClientController,
+} from "./controllers";
 
 export function setup({
   router,
@@ -17,5 +21,10 @@ export function setup({
   router.post(
     `${basePath}/login`,
     expressAdapter.adaptController(loginController)
+  );
+
+  router.get(
+    `${basePath}/pets`,
+    expressAdapter.adaptController(listUserPetsController)
   );
 }

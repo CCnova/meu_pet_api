@@ -1,5 +1,6 @@
 import { PetPrismaRepository } from "@meu-pet/pet/data";
 import { ClientPrismaRepository } from "../data";
+import makeListUserPetsUseCase from "./listUserPets.useCase";
 import makeLoginUseCase from "./login.useCase";
 import makeRegisterClientUseCase from "./registerClient.useCase";
 
@@ -10,4 +11,8 @@ const registerClientUseCase = makeRegisterClientUseCase({
 
 const loginUseCase = makeLoginUseCase(new ClientPrismaRepository());
 
-export { registerClientUseCase, loginUseCase };
+const listUserPetsUseCase = makeListUserPetsUseCase({
+  petRepository: new PetPrismaRepository(),
+});
+
+export { registerClientUseCase, loginUseCase, listUserPetsUseCase };
