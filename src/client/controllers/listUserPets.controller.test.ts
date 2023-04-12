@@ -1,5 +1,5 @@
 import { createMUserPets } from "@meu-pet/factories";
-import { EStatusCode, ValidationError } from "@meu-pet/types";
+import { EStatusCode, EUserType, ValidationError } from "@meu-pet/types";
 import * as crypto from "crypto";
 import { TListUserPetsRequest } from "../contracts/controllers.contracts";
 import makeListUserPetsController from "./listUserPets.controller";
@@ -8,12 +8,14 @@ describe("ListUserPetsController", () => {
   const listUserPets = jest.fn();
   const userId = crypto.randomUUID();
 
-  it("should return validationError when userId is of wrong type", async () => {
+  it("should return validationError when request.user not defined", async () => {
     // given
     const sut = makeListUserPetsController(listUserPets);
-    const expectedError = new ValidationError("userId must be a string");
+    const expectedError = new ValidationError(
+      "something went wrong while reading the auth token"
+    );
     const listUserPetsRequest: TListUserPetsRequest = {
-      body: { userId: 1 as any },
+      body: {},
       params: {},
       query: {},
     };
@@ -40,9 +42,14 @@ describe("ListUserPetsController", () => {
       },
     };
     const listUserPetsRequest: TListUserPetsRequest = {
-      body: { userId },
+      body: {},
       params: {},
       query: {},
+      user: {
+        id: userId,
+        email: "test@email.com",
+        type: EUserType.CLIENT,
+      },
     };
     listUserPets.mockResolvedValueOnce(expectedPets);
 

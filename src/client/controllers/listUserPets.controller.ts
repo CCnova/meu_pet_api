@@ -9,15 +9,15 @@ import { TListUserPetsUseCase } from "../contracts";
 import {
   TListUserPetsController,
   TListUserPetsRequest,
-  TListUserPetsRequestBody,
   TListUserPetsResponse,
 } from "../contracts/controllers.contracts";
 
-function validateRequestBody(
-  body: TListUserPetsRequestBody
-): TValidationResult {
+function validateRequest(request: TListUserPetsRequest): TValidationResult {
   try {
-    assert.isString(body.userId, "userId must be a string");
+    assert.isDefined(
+      request.user,
+      "something went wrong while reading the auth token"
+    );
 
     return { isValid: true, error: null };
   } catch (validationError) {
@@ -49,13 +49,13 @@ export default function makeListUserPetsController(
   return async function (
     request: TListUserPetsRequest
   ): Promise<TListUserPetsResponse> {
-    const bodyValidationResult = validateRequestBody(request.body);
+    const requestValidationResult = validateRequest(request);
 
-    if (!bodyValidationResult.isValid)
-      return handleValidationError(bodyValidationResult.error!);
+    if (!requestValidationResult.isValid)
+      return handleValidationError(requestValidationResult.error!);
 
     const listUserPetsResult = await listUserPets({
-      userId: request.body.userId,
+      userId: request.user!.id,
     });
 
     return handleAcceptedCase(listUserPetsResult);

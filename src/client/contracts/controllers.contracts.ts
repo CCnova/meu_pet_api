@@ -42,11 +42,7 @@ export type TLoginResponse = TResponse<TLoginResponseBody>;
 
 export type TLoginController = TApiController<TLoginRequest, TLoginResponse>;
 
-export type TListUserPetsRequestBody = {
-  userId: string;
-};
-
-export type TListUserPetsRequest = TRequest<TListUserPetsRequestBody>;
+export type TListUserPetsRequest = TRequest;
 
 export type TListUserPetsResponseBody = {
   data?: IPet[];

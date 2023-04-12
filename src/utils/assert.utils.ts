@@ -23,3 +23,10 @@ export function isDate(value: unknown, message: string): asserts value is Date {
 export function isOneOf<V>(value: V, values: V[], errorMessage: string) {
   if (!guard.isOneOf(value, values)) throw new ValidationError(errorMessage);
 }
+
+export function isDefined<T = unknown>(
+  value: T,
+  errorMessage: string
+): asserts value is NonNullable<T> {
+  if (!guard.isDefined(value)) throw new ValidationError(errorMessage);
+}

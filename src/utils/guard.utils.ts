@@ -51,3 +51,7 @@ export function isAgeBelow(dateOfBirth: Date, desiredAge: number): boolean {
 
   return new Date(year + desiredAge, month - 1, day) <= new Date();
 }
+
+export function isDefined(value: unknown): boolean {
+  return value != undefined;
+}

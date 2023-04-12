@@ -1,3 +1,4 @@
+import { authenticationMiddlewares } from "@meu-pet/middlewares";
 import { expressAdapter } from "../adapters";
 import { TRouter } from "../types";
 import {
@@ -25,6 +26,9 @@ export function setup({
 
   router.get(
     `${basePath}/pets`,
+    expressAdapter.adaptMiddleware(
+      authenticationMiddlewares.verifyAuthenticationToken
+    ),
     expressAdapter.adaptController(listUserPetsController)
   );
 }
