@@ -1,3 +1,4 @@
+import { ErrorHandler } from "@meu-pet/handlers";
 import {
   EStatusCode,
   InternalServerError,
@@ -83,18 +84,25 @@ export default function makeLoginController(dependencies: {
     const bodyValidationResult = validateRequestBody(request.body);
 
     if (!bodyValidationResult.isValid)
-      return handleValidationError(
-        bodyValidationResult.error as ValidationError
+      return ErrorHandler.handleError(
+        bodyValidationResult.error as ValidationError,
+        `A parameter passed to login provider is invalid`
       );
 
     const loginResult = await dependencies.login(request.body);
 
     if (loginResult instanceof ValidationError)
-      return handleValidationError(loginResult);
+      return ErrorHandler.handleError(
+        loginResult,
+        `Wrong password passed to login provider`
+      );
     if (loginResult instanceof NotFoundError)
-      return handleNotFoundError(loginResult);
+      return ErrorHandler.handleError(loginResult, `Provider email is invalid`);
     if (loginResult instanceof InternalServerError)
-      return handleInternalServerError(loginResult);
+      return ErrorHandler.handleError(
+        loginResult,
+        `Something went wrong while trying to login provider`
+      );
 
     return handleAcceptedCase(loginResult);
   };

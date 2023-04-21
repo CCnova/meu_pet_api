@@ -1,3 +1,4 @@
+import { ErrorHandler } from "@meu-pet/handlers";
 import {
   EStatusCode,
   InternalServerError,
@@ -65,16 +66,25 @@ export default function makeRegisterProviderController(dependencies: {
     const bodyValidation = validateRequestBody(request.body);
 
     if (!bodyValidation.isValid)
-      return handleValidationError(bodyValidation.error as ValidationError);
+      return ErrorHandler.handleError(
+        bodyValidation.error as ValidationError,
+        `A parameter passed to register provider is invalid`
+      );
 
     const registerProviderResult = await dependencies.registerProvider(
       request.body
     );
 
     if (registerProviderResult instanceof ValidationError)
-      return handleValidationError(registerProviderResult);
+      return ErrorHandler.handleError(
+        registerProviderResult,
+        `A parameter passed to register provider is invalid`
+      );
     if (registerProviderResult instanceof InternalServerError)
-      return handleInternalServerError(registerProviderResult);
+      return ErrorHandler.handleError(
+        registerProviderResult,
+        `Something went wrong while trying to register a provider`
+      );
 
     return handleAcceptedCase(registerProviderResult);
   };

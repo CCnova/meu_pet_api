@@ -26,21 +26,22 @@ export default function makeLoginUseCase(dependencies: {
         password: ProviderModel.isValidPassword,
       };
       const validationError = ProviderModel.validate(dto, dtoValidations);
-      if (validationError) return Promise.resolve(validationError);
+      if (validationError)
+        return Promise.resolve(
+          new ValidationError("Invalid email or password")
+        );
 
       const user = await dependencies.providerRepository.findOne({
         email: dto.email,
       });
-      if (!user)
-        return new NotFoundError(
-          `Provider user with email=${dto.email} not found`
-        );
+      if (!user) return new NotFoundError(`Invalid email or password`);
 
       const passwordValid = await dependencies.encryptionCompareFn(
         dto.password,
         user.password
       );
-      if (!passwordValid) return new ValidationError("Invalid password");
+      if (!passwordValid)
+        return new ValidationError("Invalid email or password");
 
       const payload = {
         id: user.id,

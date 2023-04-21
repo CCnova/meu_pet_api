@@ -19,10 +19,7 @@ describe("Provider LoginController", () => {
     const expectedResult = {
       statusCode: EStatusCode.UnprocessableEntity,
       body: {
-        error: {
-          httpStatusCode: EStatusCode.UnprocessableEntity,
-          message: "Email or Password invalid",
-        },
+        error: new Error("email must be a string"),
       },
     };
 
@@ -42,10 +39,7 @@ describe("Provider LoginController", () => {
     const expectedResult = {
       statusCode: EStatusCode.UnprocessableEntity,
       body: {
-        error: {
-          httpStatusCode: EStatusCode.UnprocessableEntity,
-          message: "Email or Password invalid",
-        },
+        error: new Error("password must be a string"),
       },
     };
 
@@ -58,7 +52,9 @@ describe("Provider LoginController", () => {
 
   it("should return ValidationError when useCase returns ValidationError", async () => {
     // given
-    loginUseCase.mockImplementationOnce(() => new ValidationError(""));
+    loginUseCase.mockImplementationOnce(
+      () => new ValidationError("Invalid email or password")
+    );
     const sut = makeLoginController({ login: loginUseCase });
     const mockRequest: any = {
       body: { email: "valid@email.com", password: "valid-password" },
@@ -66,10 +62,7 @@ describe("Provider LoginController", () => {
     const expectedResult = {
       statusCode: EStatusCode.UnprocessableEntity,
       body: {
-        error: {
-          httpStatusCode: EStatusCode.UnprocessableEntity,
-          message: "Email or Password invalid",
-        },
+        error: new ValidationError("Invalid email or password"),
       },
     };
 
@@ -82,7 +75,9 @@ describe("Provider LoginController", () => {
 
   it("should return NotFoundError when useCase returns NotFoundError", async () => {
     // given
-    loginUseCase.mockImplementationOnce(() => new NotFoundError(""));
+    loginUseCase.mockImplementationOnce(
+      () => new NotFoundError("Invalid email or password")
+    );
     const sut = makeLoginController({ login: loginUseCase });
     const mockRequest: any = {
       body: { email: "valid@email.com", password: "valid-password" },
@@ -90,10 +85,7 @@ describe("Provider LoginController", () => {
     const expectedResult = {
       statusCode: EStatusCode.NotFound,
       body: {
-        error: {
-          httpStatusCode: EStatusCode.NotFound,
-          message: "Email or Password invalid",
-        },
+        error: new NotFoundError("Invalid email or password"),
       },
     };
 
@@ -106,7 +98,12 @@ describe("Provider LoginController", () => {
 
   it("should return InternalServerError when useCase returns InternalServerError", async () => {
     // given
-    loginUseCase.mockImplementationOnce(() => new InternalServerError(""));
+    loginUseCase.mockImplementationOnce(
+      () =>
+        new InternalServerError(
+          "A unknown error has occurred while trying to login"
+        )
+    );
     const sut = makeLoginController({ login: loginUseCase });
     const mockRequest: any = {
       body: { email: "valid@email.com", password: "valid-password" },
@@ -114,10 +111,9 @@ describe("Provider LoginController", () => {
     const expectedResult = {
       statusCode: EStatusCode.InternalServerError,
       body: {
-        error: {
-          httpStatusCode: EStatusCode.InternalServerError,
-          message: "A unknown error has occurred while trying to login",
-        },
+        error: new InternalServerError(
+          "A unknown error has occurred while trying to login"
+        ),
       },
     };
 

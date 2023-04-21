@@ -1,10 +1,11 @@
+import { ErrorHandler } from "@meu-pet/handlers";
 import { IPet } from "@meu-pet/pet/types";
 import {
   EStatusCode,
   TValidationResult,
   ValidationError,
 } from "@meu-pet/types";
-import { assert, logger } from "@meu-pet/utils";
+import { assert } from "@meu-pet/utils";
 import { TListUserPetsUseCase } from "../contracts";
 import {
   TListUserPetsController,
@@ -25,17 +26,6 @@ function validateRequest(request: TListUserPetsRequest): TValidationResult {
   }
 }
 
-function handleValidationError(error: ValidationError) {
-  logger.log.error(
-    `A parameter passed to list user pets is invalid, message=${error.message}`
-  );
-
-  return {
-    statusCode: error.httpStatusCode,
-    body: { error },
-  };
-}
-
 function handleAcceptedCase(data: IPet[]) {
   return {
     statusCode: EStatusCode.OK,
@@ -52,7 +42,10 @@ export default function makeListUserPetsController(
     const requestValidationResult = validateRequest(request);
 
     if (!requestValidationResult.isValid)
-      return handleValidationError(requestValidationResult.error!);
+      return ErrorHandler.handleError(
+        requestValidationResult.error as ValidationError,
+        `A parameter passed to list user pets is invalid`
+      );
 
     const listUserPetsResult = await listUserPets({
       userId: request.user!.id,

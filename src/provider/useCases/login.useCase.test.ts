@@ -17,7 +17,7 @@ describe("Provider LoginUseCase", () => {
       encryptionCompareFn: compare,
       authenticationTokenGeneratorFn,
     });
-    const expectedError = new ValidationError("");
+    const expectedError = new ValidationError("Invalid email or password");
     const dto = createMLoginProviderDTO();
     jest.spyOn(ProviderModel, "validate").mockReturnValueOnce(expectedError);
 
@@ -36,9 +36,7 @@ describe("Provider LoginUseCase", () => {
       authenticationTokenGeneratorFn,
     });
     const dto = createMLoginProviderDTO();
-    const expectedError = new NotFoundError(
-      `Provider user with email=${dto.email} not found`
-    );
+    const expectedError = new NotFoundError(`Invalid email or password`);
     providerRepository.findOne.mockResolvedValueOnce(null);
 
     // when
@@ -56,7 +54,7 @@ describe("Provider LoginUseCase", () => {
       authenticationTokenGeneratorFn,
     });
     const dto = createMLoginProviderDTO();
-    const expectedError = new ValidationError("Invalid password");
+    const expectedError = new ValidationError("Invalid email or password");
     providerRepository.findOne.mockResolvedValueOnce(createMProvider());
 
     // when

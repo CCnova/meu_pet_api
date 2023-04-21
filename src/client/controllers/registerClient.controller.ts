@@ -1,11 +1,12 @@
 import { TRegisterClientUseCase } from "@meu-pet/client/contracts";
+import { ErrorHandler } from "@meu-pet/handlers";
 import {
   EStatusCode,
   InternalServerError,
   TValidationResult,
   ValidationError,
 } from "@meu-pet/types";
-import { assert, logger } from "@meu-pet/utils";
+import { assert } from "@meu-pet/utils";
 import {
   TRegisterClientController,
   TRegisterClientRequest,
@@ -35,34 +36,6 @@ function validateRequestBody(
   }
 }
 
-function handleValidationError(error: ValidationError) {
-  logger.log.error(
-    `A parameter passed to register client user is invalid, message=${error.message}`
-  );
-
-  return {
-    statusCode: error.httpStatusCode,
-    body: { error },
-  };
-}
-
-function handleArrayValidationErrors(errors: ValidationError[]) {
-  return {
-    statusCode: EStatusCode.UnprocessableEntity,
-    body: {
-      errors,
-    },
-  };
-}
-
-// TODO(CCnova): Is this function necessary?
-function handleInternalServerError(error: InternalServerError) {
-  return {
-    statusCode: error.httpStatusCode,
-    body: { error },
-  };
-}
-
 // TODO(CCnova): Is this function necessary?
 function handleAcceptedCase(data: IClientWithPets) {
   return {
@@ -80,18 +53,29 @@ export default function makeRegisterClientController(
     const bodyValidationResult = validateRequestBody(request.body);
 
     if (!bodyValidationResult.isValid)
-      return handleValidationError(
-        bodyValidationResult.error as ValidationError
+      return ErrorHandler.handleError(
+        bodyValidationResult.error as ValidationError,
+        `A parameter passed to register client request is invalid`
       );
 
     const registerClientResult = await registerClient(request.body);
 
     if (registerClientResult instanceof ValidationError)
-      return handleValidationError(registerClientResult);
+      return ErrorHandler.handleError(
+        registerClientResult,
+        `A parameter passed to register client user is invalid`
+      );
     if (registerClientResult instanceof Array<ValidationError>)
-      return handleArrayValidationErrors(registerClientResult);
+      return ErrorHandler.handleErrors(
+        registerClientResult,
+        EStatusCode.UnprocessableEntity,
+        `A parameter related to pet passed to register client user is invalid`
+      );
     if (registerClientResult instanceof InternalServerError)
-      return handleInternalServerError(registerClientResult);
+      return ErrorHandler.handleError(
+        registerClientResult,
+        `Something went wrong while trying to register a client user`
+      );
 
     return handleAcceptedCase(registerClientResult as IClientWithPets);
   };

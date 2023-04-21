@@ -44,7 +44,9 @@ describe("LoginController", () => {
 
   it("should return a InternalServerError when use case returns internal server error", async () => {
     // given
-    const expectedError = new InternalServerError("any internal server error");
+    const expectedError = new InternalServerError(
+      "An unknown error has ocurred while trying to login"
+    );
     login.mockResolvedValueOnce(expectedError);
     const sut = makeLoginController(login);
 
@@ -52,6 +54,11 @@ describe("LoginController", () => {
     const result = await sut(request);
 
     // then
-    expect(result.body).toEqual({ error: expectedError });
+    expect(result.body).toEqual({
+      error: {
+        httpStatusCode: expectedError.httpStatusCode,
+        message: expectedError.message,
+      },
+    });
   });
 });

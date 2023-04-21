@@ -1,3 +1,4 @@
+import { ErrorHandler } from "@meu-pet/handlers";
 import { EStatusCode } from "../../types";
 import {
   InternalServerError,
@@ -5,7 +6,7 @@ import {
   ValidationError,
 } from "../../types/errors.types";
 import { TValidationResult } from "../../types/validations.types";
-import { assert, logger } from "../../utils";
+import { assert } from "../../utils";
 import { TLoginUseCase } from "../contracts";
 import {
   TLoginController,
@@ -24,44 +25,6 @@ function validateRequestBody(body: TLoginRequestBody): TValidationResult {
   }
 }
 
-function handleValidationError(error: ValidationError) {
-  logger.log.error(
-    `A parameter passed to Client login is invalid, message=${error.message}`
-  );
-
-  return {
-    statusCode: error.httpStatusCode,
-    body: {
-      error: {
-        ...error,
-        message: "Email or Password invalid",
-      } as ValidationError,
-    },
-  };
-}
-
-function handleNotFoundError(error: NotFoundError) {
-  logger.log.error(
-    `A parameter passed to Client login is invalid, message=${error.message}`
-  );
-
-  return {
-    statusCode: error.httpStatusCode,
-    body: { error: { ...error, message: "Email or Password invalid" } },
-  };
-}
-
-function handleInternalServerError(error: InternalServerError) {
-  logger.log.error(
-    `A unknown error has occurred while trying to login, message=${error.message}`
-  );
-
-  return {
-    statusCode: error.httpStatusCode,
-    body: { error },
-  };
-}
-
 export default function makeLoginController(
   login: TLoginUseCase
 ): TLoginController {
@@ -69,18 +32,27 @@ export default function makeLoginController(
     const bodyValidationResult = validateRequestBody(request.body);
 
     if (!bodyValidationResult.isValid)
-      return handleValidationError(
+      return ErrorHandler.handleError(
         bodyValidationResult.error as ValidationError
       );
 
     const loginResult = await login(request.body);
 
     if (loginResult instanceof ValidationError)
-      return handleValidationError(loginResult);
+      return ErrorHandler.handleError(
+        { ...loginResult, message: "Email or Password invalid" },
+        `A parameter passed to Client login is invalid`
+      );
     if (loginResult instanceof NotFoundError)
-      return handleNotFoundError(loginResult);
+      return ErrorHandler.handleError(
+        { ...loginResult, message: "Email or Password invalid" },
+        `A parameter passed to Client login is invalid`
+      );
     if (loginResult instanceof InternalServerError)
-      return handleInternalServerError(loginResult);
+      return ErrorHandler.handleError({
+        ...loginResult,
+        message: "An unknown error has ocurred while trying to login",
+      });
 
     return {
       statusCode: EStatusCode.OK,
